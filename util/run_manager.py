@@ -51,7 +51,7 @@ class Run_Manager(object):
             for p in process_list:
                 p.start()
         else:
-            print("No valid jobs for stage %s"%request.stage)
+            print("No valid jobs.")
 
     def run(self):
 
