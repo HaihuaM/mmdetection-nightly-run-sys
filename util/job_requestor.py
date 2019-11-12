@@ -33,12 +33,15 @@ class Job_Requestor(object):
         self.script_generator()
         self.script_dir = op.join(self.run_dir, self.script_name)
         self.backup_script_dir = op.join(self.run_dir, '.backup', self.script_name)
+        self.backup_config_dir = op.join(self.run_dir, '.backup', 
+                                         op.basename(self.setting['config_file']))
         with open(self.script_dir, 'w+') as f:
             f.write(self.script_content)
 
         if op.exists(self.script_dir):
             # print("Info: script %s generated."%self.script_dir)
             shutil.copyfile(self.script_dir, self.backup_script_dir)
+            shutil.copyfile(self.setting['config_file'], self.backup_config_dir)
             self.status = self.stage + "_script" + "_ready"
         else:
             print("Error: script %s generated failed."%self.script_dir)
