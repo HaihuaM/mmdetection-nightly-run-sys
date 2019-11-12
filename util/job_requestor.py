@@ -5,6 +5,9 @@ import threading
 from database import db_connector
 import shutil
 import socket
+import subprocess
+import daemon
+from multiprocessing import Process
 
 
 class Job_Requestor(object):
@@ -53,25 +56,16 @@ class Job_Requestor(object):
         """ Start a daemon thread.
         """
         if self.status == self.stage + "_script" + "_ready":
-            t = threading.Thread(target=self._kick_off, daemon=True)
             self.status = self.stage+"_running"
             self._update_status()
-            t.start()
+            p = Process(target=process_kick_off, 
+                        args=(self.setting, 
+                              self.script_dir, 
+                              self.stage, ))
+            return p
         else:
             print("Error happened during script generation in stage %s." %self.stage)
 
-    def _kick_off(self):
-        """ Execute the command.
-        """
-        print("Info: run started for %s."%self.script_dir)
-        os.system("/bin/bash %s"%(self.script_dir))
-        if op.exists(op.join(self.run_dir, self.stage+".done")):
-            self.status = "all_done" if (self.stage == "analyze") \
-                    else (self.stage + "_done")
-        else:
-            self.status = self.stage + "_fail"
-
-        self._update_status()
 
     def _update_status(self):
         """ Update status to database
@@ -81,7 +75,27 @@ class Job_Requestor(object):
     def _db_update(self, update):
         self.db.run.update_one({'_id': self._id},
                 {"$set": update })
-        
+
+def process_kick_off(setting, script_dir, stage):
+    """ Execute the command.
+    """
+    print("Info: run started for %s."%script_dir)
+    run_dir = setting['run_dir']
+    _id = setting['_id']
+    process = subprocess.Popen("/bin/bash %s"%(script_dir), shell=True)
+    process.wait()
+
+    if op.exists(op.join(run_dir, stage+".done")):
+        status = "all_done" if (stage == "analyze") \
+                else (stage + "_done")
+    else:
+        status = stage + "_fail"
+
+    print("Info: update status <%s> into db "%status)
+    # New db connector, avoid warining use connection before into subprocess
+    db = db_connector()
+    db.run.update_one({'_id': _id},
+            {"$set": {"status":status }})
 
 class Train(Job_Requestor):
     
@@ -154,7 +168,6 @@ class Train(Job_Requestor):
             content += "%s %s --launcher pytorch "%(train_py, self.setting['config_file'])
             content += "--work_dir %s "%(self.run_dir)
             content += "--validate %s &> %s.log \n"%(ex_options, self.stage)
-
             content += "touch train.done \n"
             # return content
             self.script_content = content
@@ -175,7 +188,7 @@ class Train(Job_Requestor):
             content += "export CUDA_VISIBLE_DEVICES=" + \
                       ",".join(self.selected_gpus)+ " \n"
             content += "cd %s \n"%(self.run_dir)
-            content += "%s %s %s "%(py, train_py, setting['config_file'])
+            content += "%s %s %s "%(py, train_py, self.setting['config_file'])
             content += "--work_dir %s "%(self.run_dir)
             content += "--validate %s &> %s.log \n"%(ex_options, self.stage)
             content += "touch train.done \n"
@@ -239,7 +252,7 @@ class Evaluate(Job_Requestor):
             
             content += "%s %s %s --work_dir %s --validate %s &> train.log \n"%(py, 
                                                                          train_py,
-                                                                         setting['config_file'],
+                                                                         self.setting['config_file'],
                                                                          self.run_dir,
                                                                          ex_options)
             content += "touch evaluate.done \n"
