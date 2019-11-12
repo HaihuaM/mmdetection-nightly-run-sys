@@ -25,6 +25,7 @@ class Run_Manager(object):
         gpu_manager = GPU_Manager()
         assert (gpu_manager.num_gpu_available >= 0)
 
+        process_list = list()
         for job_request in job_requests:
             while True:
                 request = job_request()
@@ -41,10 +42,13 @@ class Run_Manager(object):
                     selected_gpus = gpu_manager.assign_gpus(setting[request.stage+'_num_gpu'])
                     request.setup(setting, selected_gpus)
                     request.dump_script()
-                    request.kick_off()
+                    process_list.append(request.kick_off())
                 else:
-                    print("No valid jobs for stage %s"%request.stage)
+                    # print("No valid jobs for stage %s"%request.stage)
                     break
+
+        for p in process_list:
+            p.start()
 
     def run(self):
 
