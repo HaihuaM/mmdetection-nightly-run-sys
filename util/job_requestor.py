@@ -77,7 +77,7 @@ class Job_Requestor(object):
                 {"$set": update })
 
 def process_kick_off(setting, script_dir, stage):
-    """ Execute the command.
+    """ Process environment to run a job.
     """
     print("Info: run started for %s."%script_dir)
     run_dir = setting['run_dir']
