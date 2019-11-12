@@ -1,0 +1,29 @@
+task1: 
+        config_file: /home/haihuam/Projects/RepPoints/configs_voc/reppoints_moment_r50_fpn_1x_voc.py
+        priority: 100
+        frequency: 2
+        description: "Some notes"
+        dist_train: True
+        train_num_gpu: 2
+        evaluate_num_gpu: 1
+        analyze_num_gpu: 0
+        mode: ""
+        python: "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
+        train_options: ""
+        analyze_options: ""
+        evaluate_options: ""
+
+task2:
+        config_file: /home/haihuam/Projects/RepPoints/configs_voc/reppoints_moment_r50_fpn_2x_voc.py
+        priority: 100
+        dist_train: True
+        frequency: 2
+        description: "Some notes"
+        train_num_gpu: 2
+        evaluate_num_gpu: 1
+        analyze_num_gpu: 0
+        mode: ""
+        python: "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
+        train_options: ""
+        analyze_options: ""
+        evaluate_options: ""
