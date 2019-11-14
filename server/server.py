@@ -39,10 +39,22 @@ def detail(run_id):
 @app.route('/delete/<run_id>')
 def delete(run_id):
     db = db_connector()
-    run_info = db.run.find_one({'_id':ObjectId(run_id)})
+    run_id = ObjectId(run_id) 
+    run_info = db.run.find_one({'_id': run_id})
     task_id = run_info['task_id']
-    db.scheduler.delete_one({'_id':ObjectId(task_id)})
-    db.run.delete_one({'_id':ObjectId(run_id)})
+
+    task_info = db.scheduler.find_one({'_id':task_id})
+    run_id_list = task_info['run_ids']
+    
+    if run_id in run_id_list:
+        run_id_list.remove(run_id)
+    if len(run_id_list) ==0:
+        db.scheduler.delete_one({'_id':ObjectId(task_id)})
+    else:
+        db.scheduler.update_one({'_id':ObjectId(task_id)},
+                            {"$set": {"run_ids": run_id_list}})
+
+    db.run.delete_one({'_id':run_id})
     return jsonify('Deleted.')
 
 @app.route('/gpu_util')
@@ -168,7 +180,9 @@ def db_connector():
                          username='dbadmin',
                          password='daohaosiquanjia')
 
+    # db = client.db_test
     db = client.ob_tracker
+
     return db
 
 
