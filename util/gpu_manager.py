@@ -1,5 +1,8 @@
 import os
 import sys
+from database import db_connector
+import time
+import datetime
 
 class GPU_Manager(object):
 
@@ -36,3 +39,20 @@ class GPU_Manager(object):
 
         self.num_gpu_available = len(self.util_id_list)
         return selected_gpus
+
+
+    def update_db(self):
+
+      gpu_util=os.popen('nvidia-smi --query-gpu=utilization.gpu --format=csv ').read()
+      gpu_utils = [ util for util in gpu_util.split() if '%' not in util][1:]
+      host_name = os.uname()[1]
+      check_time = datetime.datetime.now()
+      db = db_connector()
+      for idx, util in enumerate(gpu_utils):
+          device_id = ".".join([host_name, str(idx)])
+          db.gpu_status.insert_one({"device":device_id, 
+                                    "check_time":check_time, 
+                                    "load": util})
+if __name__ == "__main__":
+    g = GPU_Manager()
+    g.update_db()
