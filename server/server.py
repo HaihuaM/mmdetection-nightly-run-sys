@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask import render_template
 from flask import jsonify
 import psutil
@@ -30,8 +30,11 @@ def detail(run_id):
     # status = get_status()
     db = db_connector()
     run = db.run.find_one({'_id':ObjectId(run_id)})
-    metrics = run['log_data_0'].keys()
-    return render_template('charts.html', run_dir=run['run_dir'], metrics=metrics )
+    if 'log_data_0' not in run:
+        return redirect("/status.html", code=302)
+    else:
+        metrics = run['log_data_0'].keys()
+        return render_template('charts.html', run_dir=run['run_dir'], metrics=metrics )
 
 @app.route('/delete/<run_id>')
 def delete(run_id):
@@ -96,6 +99,8 @@ def retrive_run_status(run_id):
 
 
 def bytes_2_human_readable(number_of_bytes):
+    """Convert byters to readable format.
+    """
     if number_of_bytes < 0:
         raise ValueError("!!! number_of_bytes can't be smaller than 0 !!!")
 
