@@ -10,7 +10,9 @@ import os
 import sys
 import time
 import datetime
+import argparse
 from database import db_connector
+import os.path as op
 
 def task_conf_parser(config_file):
     """
@@ -93,5 +95,17 @@ def register_run(run_setting):
 
 
 if __name__ == "__main__":
-    task_conf_parser('test.yaml')
-    check_and_assign()
+
+
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('-c', '--config', help='configure file, yaml format.')
+
+    args = parser.parse_args()
+    if op.exists(args.config):
+        task_conf_parser(args.config)
+        check_and_assign()
+    else:
+        print("Error: Config file doest not exist."%args.Config)
+        sys.exit(0)
+    
+
