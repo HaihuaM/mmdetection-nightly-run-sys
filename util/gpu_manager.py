@@ -52,6 +52,7 @@ class GPU_Manager(object):
       for idx, util in enumerate(gpu_utils):
           device_id = ".".join([host_name, str(idx)])
           db.gpu_status.insert_one({"device":device_id, 
+                                    "host_name":host_name,
                                     "check_time":check_time, 
                                     "load": util})
 if __name__ == "__main__":
