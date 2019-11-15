@@ -88,7 +88,7 @@ def process_kick_off(setting, script_dir, stage):
     process.wait()
 
     if op.exists(op.join(run_dir, stage+".done")):
-        status = "all_done" if (stage == "analyze") \
+        status = "all_done" if (stage == "train") \
                 else (stage + "_done")
     else:
         status = stage + "_fail"
