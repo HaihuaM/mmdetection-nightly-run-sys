@@ -32,15 +32,21 @@ def task_conf_parser(config_file):
         config_file = schedulers[task]['config_file']
         indb_run = db.scheduler.find_one({'config_file':config_file})
 
-        if indb_run:
-            print("Config file %s already started run, you can check.."%(config_file))
-            continue
-
-        if os.path.exists(config_file):
-            register_runs(schedulers[task])
-            num_success_registered += 1
+        if indb_run !=None :
+            if (schedulers[task].get('mode','normal')!="append"):
+                print("Config file %s already started run, you can check.."%(config_file))
+                continue
+            else:
+                # import pdb; pdb.set_trace()
+                print("Append run for %s"%(config_file))
+                append_runs(indb_run, schedulers[task])
+                num_success_registered += 1
         else:
-            print("Warning: %s cannot access in <%s>."%(config_file,task))
+            if os.path.exists(config_file):
+                register_runs(schedulers[task])
+                num_success_registered += 1
+            else:
+                print("Warning: %s cannot access in <%s>."%(config_file,task))
     print("INFO: %s tasks registered."%(num_success_registered))
 
 def register_runs(task):
@@ -54,6 +60,38 @@ def register_runs(task):
     task.update({'assign_status': False})
     task.update({'submitted_time': datetime.datetime.now()})
     scheduler.insert_one(task)
+
+def append_runs(task_info, setting):
+
+    db = db_connector()
+    scheduler = db.scheduler
+    task_id = task_info['_id']
+    num_pre_runs = task_info['frequency']
+    run_ids = task_info['run_ids']
+    
+    freq = setting['frequency']
+    _filtered_fileds = ["_id", "assign_status", "frequency"]
+    
+    for idx in range(freq):
+        run_setting = {key:value for key, value in setting.items() \
+                if (key not in _filtered_fileds)}
+
+        run_setting.update({
+                       'task_id': task_id,
+                       'run_idx': idx+num_pre_runs,
+                       'status': 'pending',
+                      })
+
+        run_ids.append(register_run(run_setting))
+
+    scheduler.update_one(
+                         {'_id':task_id}, 
+                         {"$set":{
+                                  "run_ids":run_ids,
+                                  "frequency":freq+num_pre_runs,}})
+
+
+
 
 def check_and_assign():
     """
@@ -86,6 +124,8 @@ def check_and_assign():
                              {"$set":{"assign_status":True,
                                       "run_ids":run_ids}})
         
+
+
 def register_run(run_setting):
     """
     """
