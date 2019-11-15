@@ -16,49 +16,55 @@ def check_run_status():
         current_eval = "N/A"
         est_remaining_time = "N/A"
         run_id = run['_id']
-        run_dir = run['run_dir']
-        latest_chk = op.join(run_dir, 'latest.pth')
-        if op.exists(latest_chk):
-            latest_epoch = os.readlink(latest_chk)
-            latest_epoch = latest_epoch.split(".")[0]
-            current_epoch = latest_epoch
-        db.run.update_one({"_id": run_id},
-                          {"$set": {"current_epoch": current_epoch}})
-        log = glob(op.join(run_dir, "*.log.json"))
-        if len(log)>1 :
-            print("Warning: There are more than one json log in %s, skip."%(run_dir))
-            pass
-        elif len(log)<1:
-            print("Warning: No json log in %s, skip."%(run_dir))
-        else:
-            log = log[0]
-            with open(log) as f:
-                contents_lines = f.readlines()[::-1]
-            for line in contents_lines:
-                line = line.strip('\n')
-                if "mAP" in line:
+        run_dir = run.get('run_dir','')
+        if op.exists(run_dir):
+            latest_chk = op.join(run_dir, 'latest.pth')
+            if op.exists(latest_chk):
+                latest_epoch = os.readlink(latest_chk)
+                latest_epoch = latest_epoch.split(".")[0]
+                current_epoch = latest_epoch
+            db.run.update_one({"_id": run_id},
+                              {"$set": {"current_epoch": current_epoch}})
+            log = glob(op.join(run_dir, "*.log.json"))
+            if len(log)>1 :
+                print("Warning: There are more than one json log in %s, skip."%(run_dir))
+                pass
+            elif len(log)<1:
+                print("Warning: No json log in %s, skip."%(run_dir))
+            else:
+                log = log[0]
+                print(log)
+                with open(log) as f:
+                    contents_lines = f.readlines()[::-1]
+                current_eval = dict()
+                for line in contents_lines:
+                    line = line.strip('\n')
                     data = json.loads(line)
-                    current_eval = data['mAP']
-                    break
+                    keys = data.keys()
+                    selected_keys = [ k for k in keys if "mAP" in k]
+                    if len(selected_keys)>0:
+                        for metric in selected_keys:
+                            current_eval.update({metric: data[metric]})
+                        break
 
-        db.run.update_one({"_id": run_id},
-                          {"$set": {"current_eval": current_eval}})
+            db.run.update_one({"_id": run_id},
+                              {"$set": {"current_eval": current_eval}})
 
-        if op.exists(op.join(run_dir, "train.done")):
-            est_remaining_time = "00:00:00"
-        else:
-            train_log = op.join(run_dir, 
-                                op.basename(log).replace('.json', ''))
-            if op.exists(train_log):
-                with open(train_log) as f:
-                    line_contents = f.readlines()
-                last_line = line_contents[-1].strip('\n')
-                match = re.match(pattern, last_line)
-                if match:
-                    est_remaining_time = match['eta']
+            if op.exists(op.join(run_dir, "train.done")):
+                est_remaining_time = "00:00:00"
+            else:
+                train_log = op.join(run_dir, 
+                                    op.basename(log).replace('.json', ''))
+                if op.exists(train_log):
+                    with open(train_log) as f:
+                        line_contents = f.readlines()
+                    last_line = line_contents[-1].strip('\n')
+                    match = re.match(pattern, last_line)
+                    if match:
+                        est_remaining_time = match['eta']
 
-        db.run.update_one({"_id": run_id},
-                          {"$set": {"est_remaining_time": est_remaining_time}})
+            db.run.update_one({"_id": run_id},
+                              {"$set": {"est_remaining_time": est_remaining_time}})
 
 def check_run_detail():
     db = db_connector()
@@ -75,6 +81,7 @@ def check_single_run_detail(_id):
     db = db_connector()
     run = db.run.find_one({'_id':_id})
     run_dir = run.get('run_dir','')
+    host_name = os.uname().nodename
     if op.exists(run_dir):
         json_logs = glob(op.join(run_dir, "*.log.json"))
         log_dicts = load_json_logs(json_logs)
@@ -89,7 +96,8 @@ def check_single_run_detail(_id):
                     log_data[k].extend(log_dict[epoch][k])
 
             db.run.update_one({"_id": _id},
-                              {"$set": {"log_data_"+str(idx): log_data}})
+                              {"$set": {"log_data_"+str(idx): log_data,
+                                        "host":host_name}})
     else:
         pass
 
@@ -113,5 +121,5 @@ def load_json_logs(json_logs):
 
 if __name__ == "__main__":
 
-    # check_run_status()
+    check_run_status()
     check_run_detail()
