@@ -13,7 +13,7 @@ def check_run_status():
     pattern = re.compile('.*lr:.*eta: (?P<eta>\S+),.*')
     for run in runs:
         current_epoch = "N/A"
-        current_eval = "N/A"
+        current_eval = dict()
         est_remaining_time = "N/A"
         run_id = run['_id']
         run_dir = run.get('run_dir','')
@@ -36,7 +36,6 @@ def check_run_status():
                 print(log)
                 with open(log) as f:
                     contents_lines = f.readlines()[::-1]
-                current_eval = dict()
                 for line in contents_lines:
                     line = line.strip('\n')
                     data = json.loads(line)
