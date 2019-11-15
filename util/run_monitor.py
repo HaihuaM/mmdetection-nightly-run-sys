@@ -10,7 +10,7 @@ from collections import defaultdict
 def check_run_status():
     db = db_connector()
     runs = db.run.find({})
-    pattern = re.compile('.*lr:.*eta: (?P<eta>\S+),.*')
+    pattern = re.compile('.*lr:.*eta:\s(?P<eta>.*?),.*')
     for run in runs:
         current_epoch = "N/A"
         current_eval = dict()
