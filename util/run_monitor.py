@@ -74,21 +74,24 @@ def check_single_run_detail(_id):
     """
     db = db_connector()
     run = db.run.find_one({'_id':_id})
-    run_dir = run['run_dir']
-    json_logs = glob(op.join(run_dir, "*.log.json"))
-    log_dicts = load_json_logs(json_logs)
-    for idx, log_dict in enumerate(log_dicts):
-        log_data = defaultdict(list)
-        keys_list = list()
-        for epoch in log_dict:
-            keys_list.extend(log_dict[epoch].keys())
-        keys_list = list(set(keys_list))
-        for epoch in log_dict:    
-            for k in [x for x in keys_list if x in log_dict[epoch].keys()]:
-                log_data[k].extend(log_dict[epoch][k])
+    run_dir = run.get('run_dir','')
+    if op.exists(run_dir):
+        json_logs = glob(op.join(run_dir, "*.log.json"))
+        log_dicts = load_json_logs(json_logs)
+        for idx, log_dict in enumerate(log_dicts):
+            log_data = defaultdict(list)
+            keys_list = list()
+            for epoch in log_dict:
+                keys_list.extend(log_dict[epoch].keys())
+            keys_list = list(set(keys_list))
+            for epoch in log_dict:    
+                for k in [x for x in keys_list if x in log_dict[epoch].keys()]:
+                    log_data[k].extend(log_dict[epoch][k])
 
-        db.run.update_one({"_id": _id},
-                          {"$set": {"log_data_"+str(idx): log_data}})
+            db.run.update_one({"_id": _id},
+                              {"$set": {"log_data_"+str(idx): log_data}})
+    else:
+        pass
 
 def load_json_logs(json_logs):
     # load and convert json_logs to log_dict, key is epoch, value is a sub dict
