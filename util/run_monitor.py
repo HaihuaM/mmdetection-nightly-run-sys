@@ -14,6 +14,7 @@ def check_run_status():
     for run in runs:
         current_epoch = "N/A"
         current_eval = dict()
+        current_eval_html=str()
         est_remaining_time = "N/A"
         run_id = run['_id']
         run_dir = run.get('run_dir','')
@@ -45,9 +46,11 @@ def check_run_status():
                         for metric in selected_keys:
                             current_eval.update({metric: data[metric]})
                         break
-
+            for metric in current_eval:
+                current_eval_html += "<small>%s: %s</small></br>"%(metric, current_eval[metric])
             db.run.update_one({"_id": run_id},
-                              {"$set": {"current_eval": current_eval}})
+                              {"$set": {"current_eval": current_eval,
+                                        "current_eval_html": current_eval_html}})
 
             if op.exists(op.join(run_dir, "train.done")):
                 est_remaining_time = "00:00:00"
