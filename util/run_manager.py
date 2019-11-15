@@ -55,7 +55,7 @@ class Run_Manager(object):
 
     def run(self):
 
-        self.job_assigner(Train, Evaluate, Analyze)
+        self.job_assigner(Train)
 
 
 if __name__ == "__main__":
