@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+				{% include "head_nav.html" %}
+  <body>
+					{% include "nav.html" %}
+    <div class="page">
+						{% include "header.html" %}
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+            <li class="breadcrumb-item active">Status       </li>
+          </ul>
+        </div>
+      </div>
+      <section>
+        <div class="container-fluid">
+          <!-- Page Header-->
+          <header> 
+            <h1 class="h3 display">Status Details</h1>
+          </header>
+          <div class="row">
+            <div class="col-sm-6 table-responsive-sm">
+                  <h4>All Jobs</h4>
+                    <table class="table  table-condensed table-hover">
+                      <thead>
+                        <tr>
+                          <th>Config</th>
+                          <th>Run ID</th>
+                          <th>Status</th>
+                          <th>Num GPUs</th>
+                          <th>Current Epoch</th>
+                          <th>Evaluation</th>
+                          <th>Estimate Time</th>
+													<th>Operation</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+												{% for item in status %}
+                        <tr>
+																<td>{{ item.config_file }} </br>
+																				<small> Description: {{ item.description }} </small> </br>
+																				{% if item.host %}
+																				<small> Host: {{ item.host }} </small> </br>
+																				{% endif %}
+																				{% if item.run_dir %}
+																		    <small> Dir: {{ item.run_dir }} </small>
+																				{% endif %}
+																</td>
+																<td><a href="/detail/{{ item._id }}"> {{ item.run_idx }}</a></td>
+																<td>{{ item.status }}</td>
+																<td>{{ item.train_num_gpu }}</td>
+																<td>{{ item.current_epoch }}</td>
+																<td>{{ item.current_eval_html|safe }}</td>
+																<td>{{ item.est_remaining_time }}</td>
+
+                                <td>
+																		{% if modify %}
+																		<!-- Button trigger modal -->
+																		<ul>
+																		<li>	<button onclick="values('{{ item._id }}')" type="button" class="pull-right btn btn-sm btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button></li>
+
+																		<!-- <li>  <button onclick="values('{{ item._id }}')" type="button" class="pull-right btn btn-sm btn-primary" data-toggle="modal" data-target="#tuneModal"> Tune </button></li> -->
+																		</ul>
+															 {% else %}
+																		<button disabled="disabled" onclick="values('{{ item._id }}')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button>
+																{% endif %}
+															 </td>
+                        </tr>
+												{% endfor %}
+                      </tbody>
+                    </table>
+
+		<!-- Modal -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="run_id" name="run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Delete Run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to delete the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="deleteRun()" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+            </div>
+          </div>
+        </div>
+      </section>
+					{% include "footer.html" %}
+    </div>
+					{% include "script.html" %}
+          <script src="/static/js/btn-custom.js"></script>
+  </body>
+</html>
