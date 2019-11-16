@@ -5,8 +5,10 @@ import psutil
 import shutil
 import os
 from bson.objectid import ObjectId
+from bson import json_util
 import json
 import os.path as op
+import subprocess
 # from util.database import db_connector
 
 app = Flask(__name__)
@@ -19,15 +21,39 @@ def check_run_status():
     return render_template('index.html', summary=summary)
 
 @app.route('/status.html')
-def tables():
+def status():
     # return render_template('status.html')
-    status = get_status()
-    return render_template('status.html', status=status)
+    status = get_summay_status()
+    run_infos = list()
+    for run in status:
+        config_file = run['config_file']
+        run['config_file'] = op.basename(config_file)
+        run_infos.append(run)
+
+    return render_template('status.html', status=run_infos, modify=True)
+
+@app.route('/view/status.html')
+def view_status():
+    status = get_summay_status()
+    run_infos = list()
+    for run in status:
+        config_file = run['config_file']
+        run['config_file'] = op.basename(config_file)
+        run_infos.append(run)
+
+    return render_template('status.html', status=run_infos, modify=False)
+
+@app.route('/json/status')
+def json_status():
+    runs = get_summay_status()
+    run_infos = list()
+    for run in runs:
+        json_doc = json.dumps(run, default=json_util.default)
+        run_infos.append(json_doc)
+    return jsonify(run_infos)
 
 @app.route('/detail/<run_id>')
 def detail(run_id):
-    # return render_template('status.html')
-    # status = get_status()
     db = db_connector()
     run = db.run.find_one({'_id':ObjectId(run_id)})
     if 'log_data_0' not in run:
@@ -41,18 +67,28 @@ def delete(run_id):
     db = db_connector()
     run_id = ObjectId(run_id) 
     run_info = db.run.find_one({'_id': run_id})
+    run_dir = run_info.get('run_dir', '')
     task_id = run_info['task_id']
 
     task_info = db.scheduler.find_one({'_id':task_id})
+    num_runs = task_info['frequency']
+    
     run_id_list = task_info['run_ids']
     
     if run_id in run_id_list:
         run_id_list.remove(run_id)
     if len(run_id_list) ==0:
+        process = subprocess.Popen("/bin/rm -rf %s"%(op.dirname(run_dir)), shell=True)
         db.scheduler.delete_one({'_id':ObjectId(task_id)})
     else:
         db.scheduler.update_one({'_id':ObjectId(task_id)},
-                            {"$set": {"run_ids": run_id_list}})
+                            {"$set": {"run_ids": run_id_list,
+                                      "frequency":num_runs-1}})
+        if op.exists(run_dir):
+            process = subprocess.Popen("/bin/rm -rf %s"%(run_dir), shell=True)
+            process.wait()
+        else:
+            pass
 
     db.run.delete_one({'_id':run_id})
     return jsonify('Deleted.')
@@ -60,19 +96,24 @@ def delete(run_id):
 @app.route('/gpu_util')
 def gpu_util():
     db = db_connector()
+    hosts = db.gpu_status.distinct('host_name')
     devices = db.gpu_status.distinct('device')
-    data = dict()
-    for dev in devices:
-        _data = db.gpu_status.find({'device':dev}).sort("check_time", -1)
-        load_data = list()
-        chk_time = list()
-        for idx, item in enumerate(_data):
-            chk_time.append(item['check_time'])
-            load_data.append(int(item['load']))
-            if idx > 1000:
-                break
-        data.update({dev: load_data[::-1], 'chk_time': chk_time[::-1]})
-    return jsonify(data, devices)
+    load_datas = dict()
+    for host in hosts:
+        data = dict()
+        for dev in devices:
+            if host in dev:
+                _data = db.gpu_status.find({'device':dev}).sort("check_time", -1)
+                load_data = list()
+                chk_time = list()
+                for idx, item in enumerate(_data):
+                    chk_time.append(item['check_time'])
+                    load_data.append(int(item['load']))
+                    if idx > 100:
+                        break
+                data.update({dev:load_data[::-1], 'chk_time': chk_time[::-1]})
+        load_datas.update({host:data})
+    return jsonify(load_datas, hosts, devices)
 
 @app.route('/disk_util')
 def disk_util():
@@ -146,6 +187,20 @@ def get_status():
     db = db_connector()
     return db.run.find({})
 
+def get_summay_status():
+    db = db_connector()
+    return db.run.find({},{'config_file', 
+                           'run_dir',
+                           'status',
+                           'run_idx', 
+                           'description',
+                           'host', 
+                           'train_num_gpu',
+                           'current_epoch',
+                           'current_eval',
+                           'current_eval_html',
+                           'est_remaining_time'})
+
 def get_summary():
     """Check the db base to get the summary
     """
@@ -163,11 +218,13 @@ def get_summary():
 
     finished =db.run.count_documents({"status": "all_done"})
     all_jobs = db.run.count_documents({})
+    hosts = db.gpu_status.distinct('host_name')
     summary = {"running": running,
                "pending": pending,
                "failed": failed,
                "finished": finished,
-               "all": all_jobs
+               "all": all_jobs,
+               "hosts":hosts
               }
 
     return summary
