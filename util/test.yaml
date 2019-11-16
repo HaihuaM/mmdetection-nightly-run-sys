@@ -1,29 +1,45 @@
 task1: 
-        config_file: /home/haihuam/Projects/RepPoints/configs_voc/reppoints_moment_r50_fpn_1x_voc.py
+        config_file: /home/haihuam/Projects/RepPoints/configs/reppoints_moment_r50_fpn_1x.py
         priority: 100
-        frequency: 2
-        description: "Some notes"
+        frequency: 1
+        description: "COCO2017; ResNet-50; fpn; lr_step:8,11; points-to-bbox-method: moment"
         dist_train: True
         train_num_gpu: 2
         evaluate_num_gpu: 1
         analyze_num_gpu: 0
-        mode: ""
+        mode: "append"
         python: "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
         train_options: ""
         analyze_options: ""
         evaluate_options: ""
 
-task2:
-        config_file: /home/haihuam/Projects/RepPoints/configs_voc/reppoints_moment_r50_fpn_2x_voc.py
-        priority: 100
-        dist_train: True
-        frequency: 2
-        description: "Some notes"
-        train_num_gpu: 2
-        evaluate_num_gpu: 1
-        analyze_num_gpu: 0
-        mode: ""
-        python: "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
-        train_options: ""
-        analyze_options: ""
-        evaluate_options: ""
+# task2: 
+#         config_file: /home/haihuam/Projects/RepPoints/configs/reppoints_moment_r50_fpn_2x_mt.py
+#         priority: 100
+#         frequency: 2
+#         description: "COCO2017; ResNet-50; fpn; lr_step:16, 22; points-to-bbox-method: moment; multiscale-test"
+#         dist_train: True
+#         train_num_gpu: 2
+#         evaluate_num_gpu: 1
+#         analyze_num_gpu: 0
+#         mode: ""
+#         python: "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
+#         train_options: ""
+#         analyze_options: ""
+#         evaluate_options: ""
+
+# task3: 
+#         config_file: /home/haihuam/Projects/RepPoints/configs/reppoints_moment_r50_fpn_2x.py        
+#         priority: 100
+#         frequency: 2
+#         description: "COCO2017; ResNet-50; fpn; lr_step:16, 22; points-to-bbox-method: moment"
+#         dist_train: True
+#         train_num_gpu: 2
+#         evaluate_num_gpu: 1
+#         analyze_num_gpu: 0
+#         mode: ""
+#         python: "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
+#         train_options: ""
+#         analyze_options: ""
+#         evaluate_options: ""
+

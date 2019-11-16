@@ -1,994 +1,596 @@
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-> /home/haihuam/Projects/mmdetection-nightly-sys/util/run_manager.py(33)job_assigner()
--> num_candidates = self.db.run.count_documents({"$and":[{request.stage+"_num_gpu":{"$lte": gpu_manager.num_gpu_available}}, {"status":request.pre_status}]})
-(Pdb) 
-> /home/haihuam/Projects/mmdetection-nightly-sys/util/run_manager.py(33)job_assigner()
--> num_candidates = self.db.run.count_documents({"$and":[{request.stage+"_num_gpu":{"$lte": gpu_manager.num_gpu_available}}, {"status":request.pre_status}]})
-(Pdb) 
-Error: run dir /obtrack/nightly_run/task_5dc917f20914b52dc1c2f925/run_0_5dc917f20914b52dc1c2f92a create failed
-Error: run dir /obtrack/nightly_run/task_5dc917f20914b52dc1c2f925/run_0_5dc917f20914b52dc1c2f92a create failed
-Script /obtrack/nightly_run/task_5dc917f20914b52dc1c2f927/run_0_5dc917f20914b52dc1c2f92e/train.sh generated.
-Script /obtrack/nightly_run/task_5dc917f20914b52dc1c2f927/run_1_5dc917f20914b52dc1c2f930/train.sh generated.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-GPU nums not meet the requirements, or no pending jobs.
-Error: run dir /obtrack/nightly_run/task_5dc96801ec9c9b842ddaa093/run_0_5dc96801ec9c9b842ddaa098 create failed
-> /home/haihuam/Projects/mmdetection-nightly-sys/util/run_manager.py(34)job_assigner()
--> for job_request in job_requests:
-(Pdb) 
-> /home/haihuam/Projects/mmdetection-nightly-sys/util/run_manager.py(34)job_assigner()
--> for job_request in job_requests:
-(Pdb) 
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-Info: run started for /obtrack/nightly_run/task_5dc979b9468625d2ad13affe/run_0_5dc979b9468625d2ad13b005/train.sh.
-Info: run started for /obtrack/nightly_run/task_5dc979b9468625d2ad13affe/run_1_5dc979b9468625d2ad13b007/train.sh.
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
-No valid jobs for stage train
-No valid jobs for stage evaluate
-No valid jobs for stage analyze
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+Error: run dir /obtrack/nightly_run/task_5dcacc32cca2e37949416699/run_0_5dcacc32cca2e3794941669e create failed
+Error: run dir /obtrack/nightly_run/task_5dcacd24016655776812cc76/run_0_5dcacd24016655776812cc7b create failed
+Error: run dir /obtrack/nightly_run/task_5dcacd24016655776812cc76/run_0_5dcacd24016655776812cc7b create failed
+Error: run dir /obtrack/nightly_run/task_5dcacd24016655776812cc76/run_0_5dcacd24016655776812cc7b create failed
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+Info: run started for /obtrack/nightly_run/task_5dcacd24016655776812cc78/run_1_5dcacd24016655776812cc81/train.sh.
+Info: update status <train_done> into db 
+Info: run started for /obtrack/nightly_run/task_5dcacd24016655776812cc78/run_0_5dcacd24016655776812cc7f/train.sh.
+Info: update status <train_done> into db 
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+Info: run started for /obtrack/nightly_run/task_5dcacd24016655776812cc78/run_0_5dcacd24016655776812cc7f/analyze.sh.
+Info: update status <all_done> into db 
+No valid jobs.
+Info: run started for /obtrack/nightly_run/task_5dcacd24016655776812cc78/run_1_5dcacd24016655776812cc81/analyze.sh.
+Info: update status <all_done> into db 
+Info: run started for /obtrack/nightly_run/task_5dcd1a2513a29cee6906a771/run_1_5dcd1a2513a29cee6906a77e/train.sh.
+Info: update status <train_fail> into db 
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+Info: run started for /obtrack/nightly_run/task_5dcacd24016655776812cc76/run_1_5dcacd24016655776812cc7d/analyze.sh.
+Info: update status <all_done> into db 
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+Info: run started for /obtrack/nightly_run/task_5dcacd24016655776812cc76/run_0_5dcacd24016655776812cc7b/analyze.sh.
+Info: update status <all_done> into db 
+No valid jobs.
+Info: run started for /obtrack/nightly_run/task_5dcdfccceb2606d6c72ccee5/run_1_5dcdfccdeb2606d6c72cceee/train.sh.
+Info: update status <train_fail> into db 
+Info: run started for /obtrack/nightly_run/task_5dcdfccceb2606d6c72ccee5/run_0_5dcdfccdeb2606d6c72cceec/train.sh.
+Info: update status <train_fail> into db 
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
+No valid jobs.
