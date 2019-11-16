@@ -8,4 +8,5 @@ def db_connector():
                          password='daohaosiquanjia')
 
     db = client.ob_tracker
+    # db = client.db_test
     return db

@@ -3,8 +3,8 @@ var deleteRun = function () {
 	console.log('Delete '+ run_id);
 	$.getJSON('/delete/'+run_id, function(data){
     console.log(data);
+    location.reload();
   })
-  location.reload();
 };
 
 var values = function (ID) {
