@@ -97,6 +97,34 @@ def delete(run_id):
     db.run.delete_one({'_id':run_id})
     return jsonify('Deleted.')
 
+@app.route('/reschedule/<run_id>')
+def reschedule(run_id):
+    db = db_connector()
+    run_id = ObjectId(run_id) 
+    run_info = db.run.find_one({'_id': run_id})
+    run_dir = run_info.get('run_dir', '')
+
+    if op.exists(run_dir):
+        process = subprocess.Popen("/bin/rm -rf %s"%(run_dir), shell=True)
+        process.wait()
+    
+    db.run.update_one({'_id':run_id},
+            {"$unset": {"run_dir":"", 
+                        "current_eval":"",
+                        "current_eval_html":"",
+                        "current_epoch":"",
+                        "est_remaining_time":"",
+                        "log_last_update":"",
+                        "log_data_0":"",
+                        } }) 
+
+    db.run.update_one({'_id':run_id},
+            {"$set": { "status":"pending" } }) 
+
+    return jsonify('Rescheduled.')
+
+
+
 @app.route('/gpu_util')
 def gpu_util():
     db = db_connector()
@@ -202,6 +230,7 @@ def get_summay_status():
                            'train_num_gpu',
                            'current_epoch',
                            'current_eval',
+                           'log_last_update',
                            'current_eval_html',
                            'est_remaining_time'})
 
@@ -241,8 +270,8 @@ def db_connector():
                          username='dbadmin',
                          password='daohaosiquanjia')
 
-    # db = client.db_test
-    db = client.ob_tracker
+    db = client.db_test
+    # db = client.ob_tracker
 
     return db
 
