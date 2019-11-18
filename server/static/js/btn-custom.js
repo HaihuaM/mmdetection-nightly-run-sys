@@ -16,10 +16,24 @@ var rescheduleRun = function () {
   })
 };
 
+var addRun = function () {
+	var	task_id = $('#add_run_id').val();
+	console.log('log add run '+ task_id);
+	$.getJSON('/add_run/'+task_id, function(data){
+    console.log(data);
+    location.reload();
+  })
+};
+
+
 var deleteValues = function (ID) {
 		$('#delete_run_id').val(ID);
 };
 
 var rescheduleValues = function (ID) {
 		$('#rescheduler_run_id').val(ID);
+};
+
+var addrunValues = function (ID) {
+		$('#add_run_id').val(ID);
 };
