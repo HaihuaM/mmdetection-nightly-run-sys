@@ -20,7 +20,7 @@ def check_run_status():
     summary = get_summary()
     return render_template('index.html', summary=summary)
 
-@app.route('/status.html')
+@app.route('/noallowed/status.html')
 def status():
     # return render_template('status.html')
     status = get_summay_status()
@@ -60,7 +60,11 @@ def detail(run_id):
         return redirect("/status.html", code=302)
     else:
         metrics = run['log_data_0'].keys()
-        return render_template('charts.html', run_dir=run['run_dir'], metrics=metrics )
+        return render_template('charts.html', 
+                               run_dir=run['run_dir'], 
+                               config_file=run['config_file'], 
+                               description=run['description'],
+                               metrics=metrics )
 
 @app.route('/delete/<run_id>')
 def delete(run_id):
