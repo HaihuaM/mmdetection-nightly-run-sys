@@ -68,6 +68,7 @@ def append_runs(task_info, setting):
     task_id = task_info['_id']
     num_pre_runs = task_info['frequency']
     run_ids = task_info['run_ids']
+    host_name = os.uname().nodename
     
     freq = setting['frequency']
     _filtered_fileds = ["_id", "assign_status", "frequency"]
@@ -80,6 +81,7 @@ def append_runs(task_info, setting):
                        'task_id': task_id,
                        'run_idx': idx+num_pre_runs,
                        'status': 'pending',
+                       'host': host_name,
                       })
 
         run_ids.append(register_run(run_setting))
@@ -101,6 +103,7 @@ def check_and_assign():
     db = db_connector()
     scheduler = db.scheduler
     unassigned_task = scheduler.find({'assign_status': False})
+    host_name = os.uname().nodename
     for idx, task in enumerate(unassigned_task):
         task_id = task['_id']
         freq = int(task['frequency'])
@@ -115,6 +118,7 @@ def check_and_assign():
                            'task_id': task_id,
                            'run_idx': idx,
                            'status': 'pending',
+                           'host': host_name,
                           })
 
             run_ids.append(register_run(run_setting))
