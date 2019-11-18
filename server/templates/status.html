@@ -22,60 +22,60 @@
           </header>
           <div class="container">
             <div class="col-sm-6 ">
-                    <table id="status-data-table" class="table table-condensed table-hover" style="width:100%">
+                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
                       <thead>
                         <tr>
-                          <th>#</th>
                           <th>Config</th>
                           <th>Run ID</th>
+                          <th>Host</th>
                           <th>Status</th>
-                          <th>Current Epoch</th>
                           <th>Evaluation</th>
+                          <th>Current Epoch</th>
                           <th>Estimate Time</th>
-													<th>Operation</th>
+													<th>Operation(Run)</th>
+													<th>Operation(Config)</th>
                         </tr>
                       </thead>
                       <tbody>
-												{% for item in status %}
-                        <tr>
-																<td> {{ loop.index }} </td>
-																<td>
-																				<p class="text-primary"><a href="/detail/{{ item._id }}"> {{ item.config_file }}</a></p>
-																				<p><small> Description: {{ item.description }} </small> </p>
-																				<p><small> Num GPUs: {{ item.train_num_gpu }} </small> </p>
-																				{% if item.host %}
-																				<p><small> Host: {{ item.host }} </small> </p>
+												{% for item in tasks %}
+																{% for run in item.runs %}
+																<tr>
+																				{% if loop.index == 1 %}
+																				<td rowspan="{{ item.frequency }}" class="align-middle"> 
+																								{{ item.config_file }}
+																								<p><small>Notes: {{ item.description }} </small></p>
+																				</td>
 																				{% endif %}
-																				{% if item.run_dir %}
-																				<p><small> Dir: {{ item.run_dir }} </small></p>
+																				<td class="align-middle"><a href="/detail/{{ run._id }}">{{ run.run_idx }}</a> </td>
+																				<td class="align-middle">{{ run.host }}</td>
+																				<td class="align-middle">{{ run.status }}</td>
+																				<td class="align-middle">{{ run.current_eval_html | safe }}</td>
+																				<td class="align-middle">{{ run.current_epoch }}</td>
+																				<td class="align-middle">{{ run.est_remaining_time }}</td>
+                                        <td class="align-middle">
+																		    {% if modify %}
+																						<button onclick="deleteValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button>
+
+																						<button onclick="rescheduleValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Reschedule</button>
+																						<button onclick="finetuneValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Finetune</button>
+																				{% else %}
+																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Delete </button>
+																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Reschedule</button>
+																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Finetune(+2)</button>
 																				{% endif %}
-																</td>
-																<td><a href="/detail/{{ item._id }}"> {{ item.run_idx }}</a></td>
-																<td>{{ item.status }}</td>
-																<td>
-																		{{ item.current_epoch }}
-																		{% if item.log_last_update %}
-																		<hr>
-																		<em>{{ item.log_last_update }}</em>
-																		{% endif %}
-																</td>
-																<td>{{ item.current_eval_html|safe }}</td>
-																<td>{{ item.est_remaining_time }}</td>
+																				</td>
+																				{% if loop.index == 1 %}
+                                        <td rowspan="{{ item.frequency }}" class="align-middle">
+																								{% if modify %}
+																										<button onclick="addrunValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#addrunModal">Add</button>
+																								{% else %}
+																										<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal">Add</button>
+																								{% endif %}
+																				</td>
+																				{% endif %}
+																</tr>
+																{% endfor %}
 
-                                <td class="align-middle">
-																		{% if modify %}
-																		<!-- Button trigger modal -->
-																		<button onclick="deleteValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button>
-
-																		<button onclick="rescheduleValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Reschedule</button>
-																		<button onclick="finetuneValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Finetune</button>
-															 {% else %}
-																    <button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Delete </button>
-																	  <button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Reschedule</button>
-																	  <button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Finetune(+2)</button>
-																{% endif %}
-															 </td>
-                        </tr>
 												{% endfor %}
                       </tbody>
                     </table>
@@ -120,6 +120,27 @@
 	  </div>
 	 </div>
 
+		<!-- Add Run Modal -->
+		<div class="modal fade" id="addrunModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add a run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to add a new run for this config?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="addRun()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
 		<!-- hint Modal -->
 		<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -146,15 +167,15 @@
     </div>
 					{% include "script.html" %}
           <script src="/static/js/btn-custom.js"></script>
-					<link href="/static/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-					<script src="/static/js/jquery.dataTables.min.js"></script>
-					<script src="/static/js/dataTables.bootstrap4.min.js"></script>
-					<script>
-								$(document).ready(function() {
-													$('#status-data-table').DataTable();
-								});
+					<!-- <link href="/static/css/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
+					<!-- <script src="/static/js/jquery.dataTables.min.js"></script> -->
+					<!-- <script src="/static/js/dataTables.bootstrap4.min.js"></script> -->
+					<!-- <script> -->
+					<!-- 			$(document).ready(function() { -->
+					<!-- 								$('#status-data-table').DataTable(); -->
+					<!-- 			}); -->
 
-          </script>
+          <!-- </script> -->
 
   </body>
 </html>
