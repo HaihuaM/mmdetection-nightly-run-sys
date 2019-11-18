@@ -98,10 +98,11 @@ def check_single_run_detail(_id):
                 for k in [x for x in keys_list if x in log_dict[epoch].keys()]:
                     log_data[k].extend(log_dict[epoch][k])
 
+            update_time = datetime.datetime.now().strftime("%c")
             db.run.update_one({"_id": _id},
                               {"$set": {"log_data_"+str(idx): log_data,
                                         "host":host_name,
-                                        "log_last_update":datetime.datetime.now()}})
+                                        "log_last_update":update_time}})
     else:
         pass
 
