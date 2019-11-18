@@ -8,5 +8,13 @@ def db_connector():
                          password='daohaosiquanjia')
 
     db = client.ob_tracker
-    # db = client.db_test
     return db
+
+if __name__ =="__main__":
+    db = db_connector()
+    runs = db.run.find({})
+    for run in runs:
+        print(run['config_file'])
+    # # print(runs)
+    # if runs:
+    #     print("OK")

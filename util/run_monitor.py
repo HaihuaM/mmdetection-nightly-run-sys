@@ -5,6 +5,7 @@ import os.path as op
 from glob import glob
 import re, json
 from collections import defaultdict
+import datetime
 
 
 def check_run_status():
@@ -99,7 +100,8 @@ def check_single_run_detail(_id):
 
             db.run.update_one({"_id": _id},
                               {"$set": {"log_data_"+str(idx): log_data,
-                                        "host":host_name}})
+                                        "host":host_name,
+                                        "log_last_update":datetime.datetime.now()}})
     else:
         pass
 
