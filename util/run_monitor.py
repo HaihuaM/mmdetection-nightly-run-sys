@@ -6,6 +6,7 @@ from glob import glob
 import re, json
 from collections import defaultdict
 import datetime
+import subprocess
 
 
 def check_run_status():
@@ -124,7 +125,37 @@ def load_json_logs(json_logs):
                     log_dict[epoch][k].append(v)
     return log_dicts
 
+def check_deleting_runs():
+    host_name = os.uname().nodename
+    db = db_connector()
+    runs = db.run.find({'status': 'deleting', 'host':host_name})
+    for run in runs:
+        run_dir = run.get('run_dir', '')
+        run_id = run['_id']
+        task_id = run['task_id']
+        task_info = db.scheduler.find_one({'_id':task_id})
+        num_runs = task_info['frequency']
+        run_id_list = task_info['run_ids']
+
+        # Clean directory
+        if op.exists(run_dir):
+            process = subprocess.Popen("/bin/rm -rf %s"%(op.dirname(run_dir)), shell=True)
+            process.wait()
+        else: 
+            pass
+    
+        if run_id in run_id_list:
+           run_id_list.remove(run_id)
+
+        db.scheduler.update_one({'_id':task_id},
+                            {"$set": {"run_ids": run_id_list,
+                                      "frequency":num_runs-1}})
+
+        db.run.delete_one({'_id':run_id})
+        print("Deleted run: %s -> %s"%(host_name,str(run_id)))
+
 if __name__ == "__main__":
 
     check_run_status()
     check_run_detail()
+    check_deleting_runs()

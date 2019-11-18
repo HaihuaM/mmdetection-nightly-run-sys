@@ -22,26 +22,35 @@ def check_run_status():
 
 @app.route('/noallowed/status.html')
 def status():
-    # return render_template('status.html')
-    status = get_summay_status()
-    run_infos = list()
-    for run in status:
-        config_file = run['config_file']
-        run['config_file'] = op.basename(config_file)
-        run_infos.append(run)
+    db = db_connector()
+    task_list = list()
+    tasks = db.scheduler.find({})
+    for task in tasks:
+        config_file = task['config_file']
+        task['config_file'] = op.basename(config_file)
+        run_list = list()
+        for run_id in task['run_ids']:
+            run_list.append(get_run_status(run_id))
+        task.update({'runs': run_list})
+        task_list.append(task)
 
-    return render_template('status.html', status=run_infos, modify=True)
+    return render_template('status.html', tasks=task_list, modify=True)
 
 @app.route('/view/status.html')
 def view_status():
-    status = get_summay_status()
-    run_infos = list()
-    for run in status:
-        config_file = run['config_file']
-        run['config_file'] = op.basename(config_file)
-        run_infos.append(run)
+    db = db_connector()
+    task_list = list()
+    tasks = db.scheduler.find({})
+    for task in tasks:
+        config_file = task['config_file']
+        task['config_file'] = op.basename(config_file)
+        run_list = list()
+        for run_id in task['run_ids']:
+            run_list.append(get_run_status(run_id))
+        task.update({'runs': run_list})
+        task_list.append(task)
 
-    return render_template('status.html', status=run_infos, modify=False)
+    return render_template('status.html', tasks=task_list, modify=False)
 
 @app.route('/json/status')
 def json_status():
@@ -70,32 +79,10 @@ def detail(run_id):
 def delete(run_id):
     db = db_connector()
     run_id = ObjectId(run_id) 
-    run_info = db.run.find_one({'_id': run_id})
-    run_dir = run_info.get('run_dir', '')
-    task_id = run_info['task_id']
+    db.run.update_one({'_id':run_id},
+            {"$set":{"status": "deleting"}})
 
-    task_info = db.scheduler.find_one({'_id':task_id})
-    num_runs = task_info['frequency']
-    
-    run_id_list = task_info['run_ids']
-    
-    if run_id in run_id_list:
-        run_id_list.remove(run_id)
-    if len(run_id_list) ==0:
-        process = subprocess.Popen("/bin/rm -rf %s"%(op.dirname(run_dir)), shell=True)
-        db.scheduler.delete_one({'_id':ObjectId(task_id)})
-    else:
-        db.scheduler.update_one({'_id':ObjectId(task_id)},
-                            {"$set": {"run_ids": run_id_list,
-                                      "frequency":num_runs-1}})
-        if op.exists(run_dir):
-            process = subprocess.Popen("/bin/rm -rf %s"%(run_dir), shell=True)
-            process.wait()
-        else:
-            pass
-
-    db.run.delete_one({'_id':run_id})
-    return jsonify('Deleted.')
+    return jsonify('Pending for deleting.')
 
 @app.route('/reschedule/<run_id>')
 def reschedule(run_id):
@@ -123,6 +110,52 @@ def reschedule(run_id):
 
     return jsonify('Rescheduled.')
 
+
+
+@app.route('/add_run/<task_id>')
+def add_run(task_id):
+    db = db_connector()
+    task_id = ObjectId(task_id)
+    task = db.scheduler.find_one({'_id': task_id})
+    host_name = os.uname().nodename
+    num_pre_runs = task['frequency']
+    # print(num_pre_runs)
+
+    run_list = task['run_ids']
+    if len(run_list)==0:
+        run_idx = 0
+    else:
+        latest_run_id = run_list[-1]
+        latest_run = db.run.find_one({'_id': latest_run_id})
+        run_idx = latest_run['run_idx'] + 1
+
+    _filtered_fileds = ["_id", "assign_status", "frequency"]
+
+    run_setting = {key:value for key, value in task.items() \
+            if (key not in _filtered_fileds)}
+
+    run_setting.update({
+                   'task_id': task_id,
+                   'run_idx': run_idx,
+                   'status': 'pending',
+                   'host': host_name,
+                  })
+
+    run_list.append(register_run(run_setting))
+    db.scheduler.update_one(
+                         {'_id':task_id}, 
+                         {"$set":{
+                                  "run_ids":run_list,
+                                  "frequency":1+num_pre_runs,}})
+
+    return jsonify('Added.')
+
+def register_run(run_setting):
+    """
+    """
+    db = db_connector()
+    run = db.run
+    return run.insert_one(run_setting).inserted_id
 
 
 @app.route('/gpu_util')
@@ -234,6 +267,21 @@ def get_summay_status():
                            'current_eval_html',
                            'est_remaining_time'})
 
+def get_run_status(run_id):
+    db = db_connector()
+    return db.run.find_one({'_id': run_id},{'config_file', 
+                           'run_dir',
+                           'status',
+                           'run_idx', 
+                           'description',
+                           'host', 
+                           'train_num_gpu',
+                           'current_epoch',
+                           'current_eval',
+                           'log_last_update',
+                           'current_eval_html',
+                           'est_remaining_time'})
+
 def get_summary():
     """Check the db base to get the summary
     """
@@ -261,6 +309,9 @@ def get_summary():
               }
 
     return summary
+
+
+
 
 
 def db_connector():
