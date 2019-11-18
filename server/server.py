@@ -270,8 +270,8 @@ def db_connector():
                          username='dbadmin',
                          password='daohaosiquanjia')
 
-    db = client.db_test
-    # db = client.ob_tracker
+    # db = client.db_test
+    db = client.ob_tracker
 
     return db
 
