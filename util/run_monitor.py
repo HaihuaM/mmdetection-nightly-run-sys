@@ -34,6 +34,7 @@ def check_run_status():
                 pass
             elif len(log)<1:
                 print("Warning: No json log in %s, skip."%(run_dir))
+                continue 
             else:
                 log = log[0]
                 print(log)
@@ -54,6 +55,7 @@ def check_run_status():
                               {"$set": {"current_eval": current_eval,
                                         "current_eval_html": current_eval_html}})
 
+            
             if op.exists(op.join(run_dir, "train.done")):
                 est_remaining_time = "00:00:00"
             else:
