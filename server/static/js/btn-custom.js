@@ -37,3 +37,21 @@ var rescheduleValues = function (ID) {
 var addrunValues = function (ID) {
 		$('#add_run_id').val(ID);
 };
+
+var compareRuns = function(){
+		var checkedBoxes = document.querySelectorAll('input[name=compare-runs-checkbox]:checked');
+		if (checkedBoxes.length >= 2) 
+		{ 
+			 var i;
+			 var ids = new Array();
+			 for (i=0; i<checkedBoxes.length; i++)
+			  { 
+								ids.push(checkedBoxes[i].value);
+			  };
+			 url = '/compare/'+ids.join('_');
+			 window.location = url; 
+
+		} else{
+			 alert("Only two runs comparison are supported."); 
+		};
+};

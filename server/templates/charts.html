@@ -44,9 +44,11 @@
           <!-- Page Header-->
           <header> 
             <h1 class="h3 display">Data Analysis</h1>
+						{% if not compare_mode  %}
 						<small >run -> {{ run_dir }}</small></br>
 						<small >Config: {{ config_file }}</small></br>
 						<small >Description: {{ description }}</small>
+						{% endif %}
           </header>
           {% for metric in metrics %}
             <div class="row">
@@ -67,9 +69,11 @@
       </section>
 					{% include "footer.html" %}
     </div>
-    <!-- JavaScript files-->
 					{% include "script.html" %}
+					{% if compare_mode %}
+          <script src="/static/js/charts-compare.js"></script>
+					{% else %}
           <script src="/static/js/charts-custom.js"></script>
-    <!-- Main File-->
+					{% endif %}
   </body>
 </html>

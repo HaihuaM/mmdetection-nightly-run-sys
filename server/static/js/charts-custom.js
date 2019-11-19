@@ -5,15 +5,11 @@ $(document).ready(function () {
 
     var brandPrimary = 'rgba(51, 179, 90, 1)';
 
-
-		
 		var url = window.location.href;
 		var url_list = url.split('/');
 		var run_id = url_list[url_list.length-1];
 		var range = (start, end) => new Array(end - start).fill(start).map((el, i) => start + i);
 		$.getJSON('/run_status/'+run_id, function(data){
-				var epoch_id;
-				var i = 0;
 				var datasets = {};
 				for (var data_key in data)
 				{

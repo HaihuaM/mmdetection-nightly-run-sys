@@ -46,9 +46,31 @@
 																								<p><small>Notes: {{ item.description }} </small></p>
 																				</td>
 																				{% endif %}
-																				<td class="align-middle"><a href="/detail/{{ run._id }}">{{ run.run_idx }}</a> </td>
-																				<td class="align-middle">{{ run.host }}</td>
-																				<td class="align-middle">{{ run.status }}</td>
+																				<td class="align-middle">
+																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
+																				</td>
+																				<td class="align-middle"><small>{{ run.host }}</small></td>
+																				<td class="align-middle">
+																								{% if run.status == "all_done" %}
+																								<p class="text-success">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "train_done" %}
+																								<p class="text-success">all_done<p>
+																								{% endif %}
+																								{% if run.status == "train_running" %}
+																								<p class="text-info">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "train_fail" %}
+																								<p class="text-danger">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "pending" %}
+																								<p class="text-warning">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "deleting" %}
+																								<p class="text-warning">{{ run.status }}<p>
+																								{% endif %}
+																								<p><small>{{ run.log_last_update }} </small></p>
+																				</td>
 																				<td class="align-middle">{{ run.current_eval_html | safe }}</td>
 																				<td class="align-middle">{{ run.current_epoch }}</td>
 																				<td class="align-middle">{{ run.est_remaining_time }}</td>
@@ -57,11 +79,13 @@
 																						<button onclick="deleteValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button>
 
 																						<button onclick="rescheduleValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Reschedule</button>
-																						<button onclick="finetuneValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Finetune</button>
+																						<button onclick="finetuneValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Finetune(+2)</button>
+																						<button  type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"> Compare</button>
 																				{% else %}
 																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Delete </button>
 																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Reschedule</button>
 																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Finetune(+2)</button>
+																						<button type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"> Compare</button>
 																				{% endif %}
 																				</td>
 																				{% if loop.index == 1 %}
@@ -140,6 +164,66 @@
 	  </div>
 	 </div>
 
+		<!-- Compare Modal -->
+		<div class="modal fade modal-xl" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="width:90%">
+		<div class="modal-dialog modal-lg" style="width:90%" role="document">
+      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Compare between different runs</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> 
+							<div class="custom-control custom-checkbox">
+			
+                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Config</th>
+                          <th>Run ID</th>
+                          <th>Current Epoch</th>
+                          <th>Select</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+												{% for item in tasks %}
+																{% for run in item.runs %}
+																<tr>
+																				{% if loop.index == 1 %}
+																				<td rowspan="{{ item.frequency }}" class="align-middle"> 
+																								{{ item.config_file }}
+																								<p><small>Notes: {{ item.description }} </small></p>
+																				</td>
+																				{% endif %}
+																				<td class="align-middle">
+																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
+																				</td>
+																				<td class="align-middle">{{ run.current_epoch }}</td>
+																				<td>
+																								<div class="custom-control custom-checkbox">
+																												<input name="compare-runs-checkbox" type="checkbox" class="custom-control-input" id="check-box-{{ run._id }}" value="{{run._id}}">
+																												<label class="custom-control-label" for="check-box-{{ run._id }}"></label>
+																								</div>
+																				</td>
+																</tr>
+																{% endfor %}
+
+												{% endfor %}
+                      </tbody>
+                    </table>
+						</div>
+			
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="compareRuns()" type="button" class="btn btn-primary" data-dismiss="modal">Compare</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
 
 		<!-- hint Modal -->
 		<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -176,6 +260,9 @@
 					<!-- 			}); -->
 
           <!-- </script> -->
+					<script>
+					</script>
+
 
   </body>
 </html>

@@ -73,7 +73,29 @@ def detail(run_id):
                                run_dir=run['run_dir'], 
                                config_file=run['config_file'], 
                                description=run['description'],
-                               metrics=metrics )
+                               metrics=metrics,
+                               compare_mode=False)
+
+@app.route('/compare/<compare_id>')
+def compare(compare_id):
+    db = db_connector()
+    run_ids = compare_id.split('_')
+    filetered_metrics = ['memory', 'time', 'data_time', 'bbox_mAP_copypaste']
+    metrics = list()
+    for run_id in run_ids:
+        run = db.run.find_one({'_id':ObjectId(run_id)})
+        if 'log_data_0' not in run:
+            return redirect("/status.html", code=302)
+        _metrics = run['log_data_0'].keys()
+        metrics.append(_metrics)
+
+    metrics = list(set(metrics[0]) & set(metrics[1]))
+    metrics = [x for x in metrics if x not in filetered_metrics]
+    return render_template('charts.html', 
+                           metrics=metrics,
+                           compare_mode=True)
+
+
 
 @app.route('/delete/<run_id>')
 def delete(run_id):
@@ -215,6 +237,29 @@ def retrive_run_status(run_id):
     run = db.run.find_one({'_id':ObjectId(run_id)})
     return jsonify(run['log_data_0'])
 
+@app.route('/compare_run_status/<compare_id>')
+def compare_run_status(compare_id):
+    db = db_connector()
+    run_ids = compare_id.split('_')
+    metrics = list()
+    data = list()
+    names = list()
+    for run_id in run_ids:
+        run = db.run.find_one({'_id':ObjectId(run_id)})
+        config_file = op.basename(run['config_file'])
+        run_idx = run['run_idx']
+        names.append('->'.join([config_file,str(run_idx)]))
+        if 'log_data_0' not in run:
+            return redirect("/status.html", code=302)
+        _metrics = run['log_data_0'].keys()
+        metrics.append(_metrics)
+        data.append(run['log_data_0'])
+
+    metrics = list(set(metrics[0]) & set(metrics[1]))
+    for _data in data:
+        _data = {k:v for k, v in _data.items() if k in metrics}
+
+    return jsonify({'data':data, 'names':names})
 
 def bytes_2_human_readable(number_of_bytes):
     """Convert byters to readable format.
