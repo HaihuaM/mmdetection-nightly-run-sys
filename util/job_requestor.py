@@ -48,6 +48,10 @@ class Job_Requestor(object):
             self.status = self.stage + "_script" + "_fail"
             sys.exit(0)
 
+
+        host_name = os.uname().nodename
+        self.setting.update({'host':host_name})
+
         self._update_status()
         self._db_update(self.setting)
         
