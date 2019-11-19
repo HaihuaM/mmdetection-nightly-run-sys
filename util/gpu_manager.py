@@ -6,7 +6,7 @@ import datetime
 
 class GPU_Manager(object):
 
-    def __init__(self, threshold = 80):
+    def __init__(self, threshold = 20):
         self.threshold = threshold
         self.util_id_list = self.get_availabe_gpu_ids()
         # self.util_id_list = ["0", "1", "2", "3"]
@@ -19,12 +19,12 @@ class GPU_Manager(object):
          Return: the devices id under the threshold
       """
       # gpu_util=os.popen('nvidia-smi --query-gpu=utilization.gpu --format=csv ').read()
-      gpu_util =os.popen('nvidia-smi --query-gpu=utilization.memory --format=csv ').read()
+      gpu_util =os.popen('nvidia-smi --query-gpu=utilization.memory --format=csv').read()
       gpu_util = [ util for util in gpu_util.split() if '%' not in util][1:]
       gpu_util = [ int(util) for util in gpu_util]
       util_id_list=list()
       for idx, util in enumerate(gpu_util):
-          if util>self.threshold:
+          if util<self.threshold:
               util_id_list.append(str(idx))
       return util_id_list
 
