@@ -11,7 +11,7 @@ import sys
 import os.path as op
 from database import db_connector
 from gpu_manager import GPU_Manager
-from job_requestor import Train, Evaluate, Analyze
+from job_requestor import Train, Recover, Evaluate, Analyze
 
 class Run_Manager(object):
 
@@ -55,7 +55,7 @@ class Run_Manager(object):
 
     def run(self):
 
-        self.job_assigner(Train)
+        self.job_assigner(Train, Recover)
 
 
 if __name__ == "__main__":

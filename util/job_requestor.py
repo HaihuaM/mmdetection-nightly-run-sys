@@ -89,19 +89,23 @@ def process_kick_off(setting, script_dir, stage):
     run_dir = setting['run_dir']
     _id = setting['_id']
     process = subprocess.Popen("/bin/bash %s"%(script_dir), shell=True)
-    process.wait()
-
-    if op.exists(op.join(run_dir, stage+".done")):
-        status = "all_done" if (stage == "train") \
-                else (stage + "_done")
-    else:
-        status = stage + "_fail"
-
-    print("Info: update status <%s> into db "%status)
-    # New db connector, avoid warining use connection before into subprocess
+    process_pid = process.pid
     db = db_connector()
     db.run.update_one({'_id': _id},
-            {"$set": {"status":status }})
+            {"$set": {"pid": process_pid}})
+    # process.wait()
+
+    # if op.exists(op.join(run_dir, stage+".done")):
+    #     status = "all_done" if (stage == "train") \
+    #             else (stage + "_done")
+    # else:
+    #     status = stage + "_fail"
+
+    # print("Info: update status <%s> into db "%status)
+    # # New db connector, avoid warining use connection before into subprocess
+    # db = db_connector()
+    # db.run.update_one({'_id': _id},
+    #         {"$set": {"status":status }})
 
 class Train(Job_Requestor):
     
@@ -233,6 +237,53 @@ class Analyze(Job_Requestor):
         else:
             print("Error: %s is not executable."%py)
             sys.exit(0)
+
+
+class Recover(Job_Requestor):
+    def __init__(self):
+        super(Recover, self).__init__()
+        self.script_name = "recover.sh"
+        self.stage = "recover"
+        self.pre_status = "recovering"
+
+    def script_generator(self):
+        """ Function to generate distributed training scripts.
+        Paramters: setting.
+        Return: script content.
+        """
+
+        self._get_free_tcp_port()
+
+        train_py = "/home/haihuam/Projects/RepPoints/mmdetection/tools/train.py"
+        py = self.global_setting.get('python', sys.executable)
+        ex_options = self.global_setting.get('train_options', str())
+        
+        if os.access(py, os.X_OK):
+            content = "set -e \n"
+            content += "export CUDA_VISIBLE_DEVICES=" + \
+                      ",".join(self.selected_gpus)+ " \n"
+
+            content += "cd %s \n"%(self.run_dir)
+            content += "%s -m torch.distributed.launch "%(py)
+            content += "--nproc_per_node=%s "%(self.setting['train_num_gpu'])
+            content += "--master_port %s "%(self.dist_train_port)
+            content += "%s %s --launcher pytorch "%(train_py, self.setting['config_file'])
+            content += "--work_dir %s "%(self.run_dir)
+            content += "--resume_from latest.pth "
+            content += "--validate %s &> %s.log \n"%(ex_options, self.stage)
+            content += "touch train.done \n"
+            # return content
+            self.script_content = content
+        else:
+            print("Error: %s is not executable."%py)
+            sys.exit(0)
+
+    def _get_free_tcp_port(self):
+        tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcp.bind(('', 0))
+        addr, port = tcp.getsockname()
+        tcp.close()
+        self.dist_train_port = port
 
 class Evaluate(Job_Requestor):
     def __init__(self):

@@ -106,6 +106,33 @@ def delete(run_id):
 
     return jsonify('Pending for deleting.')
 
+@app.route('/stop/<run_id>')
+def stop(run_id):
+    db = db_connector()
+    run_id = ObjectId(run_id) 
+    run = db.run.find_one({'_id': run_id})
+    run_pid = run.get('pid', 0)
+    if run_pid:
+        db.run.update_one({'_id':run_id},
+                {"$set":{"status": "stopping"}})
+        return jsonify('Pending for stop.')
+    else:
+        return jsonify(0)
+
+@app.route('/recover/<run_id>')
+def recover(run_id):
+    db = db_connector()
+    run_id = ObjectId(run_id) 
+    run = db.run.find_one({'_id': run_id})
+    if run['status'] == 'train_stopped':
+        train_num_gpu = run['train_num_gpu']
+        db.run.update_one({'_id':run_id},
+                {"$set":{"status": "recovering",
+                         "recover_num_gpu": train_num_gpu}})
+        return jsonify('Pending for recovering.')
+    else:
+        return jsonify(0)
+
 @app.route('/reschedule/<run_id>')
 def reschedule(run_id):
     db = db_connector()
