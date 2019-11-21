@@ -10,9 +10,8 @@ from collections import defaultdict
 from database import db_connector
 
 def check_fail(run, db):
-    run_dir = run['run_dir']
-    run_id = run['_id']
     if 'running' in run['status']:
+        run_id = run['_id']
         run_pid = run.get('pid',0)
         if run_pid:
             print("check thread for %s"%run_pid)
@@ -71,7 +70,9 @@ def get_metrics(run, db):
 
 def get_eta(run, db):
 
-    run_dir = run['run_dir']
+    run_dir = run.get('run_dir','')
+    if not op.exists(run_dir):
+        return 
     run_id = run['_id']
     est_remaining_time = "N/A"
     pattern = re.compile('.*lr:.*eta:\s(?P<eta>.*?),.*')
