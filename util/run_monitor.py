@@ -61,7 +61,6 @@ def get_metrics(run, db):
                         for metric in selected_keys:
                             current_eval.update({metric: data[metric]})
                         break
-                print(current_eval)
                 if len(current_eval)>0:
                     for metric in current_eval:
                         current_eval_html += "<small>%s: %s</small></br>"%(metric, current_eval[metric])
@@ -79,19 +78,21 @@ def get_eta(run, db):
     if op.exists(op.join(run_dir, "train.done")):
         est_remaining_time = "00:00:00"
     else:
-        train_log = glob(op.join(run_dir, "*.log"))
-        train_log = [ x for x in train_log if re.search(r'\d{8}_\d{6}.log$', x)]
-        train_log.sort(key=os.path.getmtime) 
-        if len(train_log)<0:
+        train_logs = glob(op.join(run_dir, "*.log"))
+        train_logs = [ x for x in train_logs if re.search(r'\d{8}_\d{6}.log$', x)]
+        train_logs.sort(key=os.path.getmtime) 
+        if len(train_logs)<0:
             pass
         else:
-            latest_log = train_log[-1]
-            with open(latest_log) as f:
-                line_contents = f.readlines()
-            last_line = line_contents[-1].strip('\n')
-            match = re.match(pattern, last_line)
-            if match:
-                est_remaining_time = match['eta']
+            for train_log in train_logs[::-1]:
+
+                with open(train_log) as f:
+                    line_contents = f.readlines()
+                last_line = line_contents[-1].strip('\n')
+                match = re.match(pattern, last_line)
+                if match:
+                    est_remaining_time = match['eta']
+                    break
 
     db.run.update_one({"_id": run_id},
                       {"$set": {"est_remaining_time": est_remaining_time}})
@@ -195,10 +196,22 @@ def check_deleting_runs():
     for run in runs:
         run_dir = run.get('run_dir', '')
         run_id = run['_id']
+        run_pid = run.get('pid',0)
         task_id = run['task_id']
         task_info = db.scheduler.find_one({'_id':task_id})
         num_runs = task_info['frequency']
         run_id_list = task_info['run_ids']
+
+        if run_pid:
+            print("check thread for %s"%run_pid)
+            try:
+                p = psutil.Process(int(run_pid))
+                for c in p.children(recursive=True):
+                            c.kill()
+                db.run.update_one({"_id": run_id},
+                                  {"$set": {"status": 'train_stopped'}})
+            except:
+                print("Job process not exits.")
 
         # Clean directory
         if op.exists(run_dir):
