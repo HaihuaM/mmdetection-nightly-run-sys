@@ -20,7 +20,7 @@ def check_run_status():
     summary = get_summary()
     return render_template('index.html', summary=summary)
 
-@app.route('/noallowed/status.html')
+@app.route('/noallow/status.html')
 def status():
     db = db_connector()
     task_list = list()
@@ -124,7 +124,7 @@ def recover(run_id):
     db = db_connector()
     run_id = ObjectId(run_id) 
     run = db.run.find_one({'_id': run_id})
-    if run['status'] == 'train_stopped':
+    if 'ing' not in run['status']:
         train_num_gpu = run['train_num_gpu']
         db.run.update_one({'_id':run_id},
                 {"$set":{"status": "recovering",
@@ -283,10 +283,12 @@ def compare_run_status(compare_id):
         data.append(run['log_data_0'])
 
     metrics = list(set(metrics[0]) & set(metrics[1]))
+    run_data = list()
     for _data in data:
         _data = {k:v for k, v in _data.items() if k in metrics}
+        run_data.append(_data)
 
-    return jsonify({'data':data, 'names':names})
+    return jsonify({'data':run_data, 'names':names})
 
 def bytes_2_human_readable(number_of_bytes):
     """Convert byters to readable format.
