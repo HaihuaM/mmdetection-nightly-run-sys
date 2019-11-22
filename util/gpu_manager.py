@@ -1,13 +1,15 @@
 import os
 import sys
-from database import db_connector
 import time
 import datetime
+from database import db_connector
+
 
 class GPU_Manager(object):
 
-    def __init__(self, threshold = 20):
+    def __init__(self, check_history = 2, threshold = 20):
         self.threshold = threshold
+        self.check_hist = check_history
         self.util_id_list = self.get_availabe_gpu_ids()
         # self.util_id_list = ["0", "1", "2", "3"]
         self.num_gpu_available = len(self.util_id_list)
@@ -18,14 +20,29 @@ class GPU_Manager(object):
          Paramters: gpu utilization threshold 
          Return: the devices id under the threshold
       """
-      # gpu_util=os.popen('nvidia-smi --query-gpu=utilization.gpu --format=csv ').read()
       gpu_util =os.popen('nvidia-smi --query-gpu=utilization.memory --format=csv').read()
       gpu_util = [ util for util in gpu_util.split() if '%' not in util][1:]
       gpu_util = [ int(util) for util in gpu_util]
       util_id_list=list()
+
+      host_name = os.uname().nodename
+      db = db_connector()
       for idx, util in enumerate(gpu_util):
+          device = '.'.join([host_name, str(idx)])
           if util<self.threshold:
-              util_id_list.append(str(idx))
+              if self.check_hist:
+                  datas = db.gpu_status.find({'device': device}).sort("check_time", -1).limit(self.check_hist)
+                  load = 0
+                  for i, data in enumerate(datas):
+                      _load = int(data['load'])
+                      load = (load*i + _load)/(i+1)
+
+                  if load < self.threshold: 
+                      util_id_list.append(str(idx))
+              else:
+                  util_id_list.append(str(idx))
+
+
       return util_id_list
 
     def assign_gpus(self, num_gpu):
