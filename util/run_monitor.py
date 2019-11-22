@@ -71,7 +71,7 @@ def get_eta(run, db, run_dir):
 
     run_id = run['_id']
     est_remaining_time = "N/A"
-    pattern = re.compile('.*lr:.*eta:\s(?P<eta>.*?),.*')
+    pattern = re.compile('.*lr:.*eta:\s(?P<eta>.*?)\D+:')
     if op.exists(op.join(run_dir, "train.done")):
         est_remaining_time = "00:00:00"
     else:
