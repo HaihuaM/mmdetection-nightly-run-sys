@@ -9,7 +9,7 @@ from glob import glob
 from collections import defaultdict
 from database import db_connector
 
-def check_fail(run, db):
+def check_fail(run, db, run_dir):
     if 'running' in run['status']:
         run_id = run['_id']
         run_pid = run.get('pid',0)
@@ -27,52 +27,48 @@ def check_fail(run, db):
                     db.run.update_one({"_id": run_id},
                                   {"$set": {"status": 'train_fail'}})
 
-def get_metrics(run, db):
+def get_metrics(run, db, run_dir):
 
     current_epoch = "N/A"
     current_eval = dict()
     current_eval_html=str()
     run_id = run['_id']
-    run_dir = run.get('run_dir','')
-    if op.exists(run_dir):
-        latest_chk = op.join(run_dir, 'latest.pth')
-        if op.exists(latest_chk):
-            latest_epoch = os.readlink(latest_chk)
-            latest_epoch = latest_epoch.split(".")[0]
-            current_epoch = latest_epoch
-        db.run.update_one({"_id": run_id},
-                          {"$set": {"current_epoch": current_epoch}})
-        logs = glob(op.join(run_dir, "*.log.json"))
-        logs.sort(key=os.path.getmtime) 
-        if len(logs)<1:
-            print("Warning: No json log in %s, skip."%(run_dir))
-            return 
-        else:
-            for log in logs[::-1]:
-                with open(log) as f:
-                    contents_lines = f.readlines()[::-1]
-                for line in contents_lines:
-                    line = line.strip('\n')
-                    data = json.loads(line)
-                    keys = data.keys()
-                    selected_keys = [ k for k in keys if "mAP" in k]
-                    if len(selected_keys)>0:
-                        for metric in selected_keys:
-                            current_eval.update({metric: data[metric]})
-                        break
-                if len(current_eval)>0:
-                    for metric in current_eval:
-                        current_eval_html += "<small>%s: %s</small></br>"%(metric, current_eval[metric])
-                    db.run.update_one({"_id": run_id},
-                                      {"$set": {"current_eval": current_eval,
-                                                "current_eval_html": current_eval_html}})
-                    break
 
-def get_eta(run, db):
-
-    run_dir = run.get('run_dir','')
-    if not op.exists(run_dir):
+    latest_chk = op.join(run_dir, 'latest.pth')
+    if op.exists(latest_chk):
+        latest_epoch = os.readlink(latest_chk)
+        latest_epoch = latest_epoch.split(".")[0]
+        current_epoch = latest_epoch
+    db.run.update_one({"_id": run_id},
+                      {"$set": {"current_epoch": current_epoch}})
+    logs = glob(op.join(run_dir, "*.log.json"))
+    logs.sort(key=os.path.getmtime) 
+    if len(logs)<1:
+        print("Warning: No json log in %s, skip."%(run_dir))
         return 
+    else:
+        for log in logs[::-1]:
+            with open(log) as f:
+                contents_lines = f.readlines()[::-1]
+            for line in contents_lines:
+                line = line.strip('\n')
+                data = json.loads(line)
+                keys = data.keys()
+                selected_keys = [ k for k in keys if "mAP" in k]
+                if len(selected_keys)>0:
+                    for metric in selected_keys:
+                        current_eval.update({metric: data[metric]})
+                    break
+            if len(current_eval)>0:
+                for metric in current_eval:
+                    current_eval_html += "<small>%s: %s</small></br>"%(metric, current_eval[metric])
+                db.run.update_one({"_id": run_id},
+                                  {"$set": {"current_eval": current_eval,
+                                            "current_eval_html": current_eval_html}})
+                break
+
+def get_eta(run, db, run_dir):
+
     run_id = run['_id']
     est_remaining_time = "N/A"
     pattern = re.compile('.*lr:.*eta:\s(?P<eta>.*?),.*')
@@ -98,33 +94,33 @@ def get_eta(run, db):
     db.run.update_one({"_id": run_id},
                       {"$set": {"est_remaining_time": est_remaining_time}})
 
-def check_run_detail(run, db):
+def check_run_detail(run, db, run_dir):
     """Retrivel the detail data from the run.
     """
-    run_dir = run.get('run_dir','')
     run_id = run['_id']
     host_name = os.uname().nodename
-    if op.exists(run_dir):
-        json_logs = glob(op.join(run_dir, "*.log.json"))
-        json_logs.sort(key=os.path.getmtime) 
-        log_dict = load_json_logs(json_logs)
+    json_logs = glob(op.join(run_dir, "*.log.json"))
 
-        log_data = defaultdict(list)
-        keys_list = list()
-        for epoch in log_dict:
-            keys_list.extend(log_dict[epoch].keys())
-        keys_list = list(set(keys_list))
-        for epoch in log_dict:    
-            for k in [x for x in keys_list if x in log_dict[epoch].keys()]:
-                log_data[k].extend(log_dict[epoch][k])
+    if len(json_logs)<1:
+        return
 
-        mtime = datetime.datetime.fromtimestamp(int(op.getmtime(json_logs[-1])))
-        db.run.update_one({"_id": run_id},
-                          {"$set": {"log_data_0": log_data,
-                                    "host":host_name,
-                                    "log_last_update":mtime}})
-    else:
-        pass
+    json_logs.sort(key=os.path.getmtime) 
+    log_dict = load_json_logs(json_logs)
+
+    log_data = defaultdict(list)
+    keys_list = list()
+    for epoch in log_dict:
+        keys_list.extend(log_dict[epoch].keys())
+    keys_list = list(set(keys_list))
+    for epoch in log_dict:    
+        for k in [x for x in keys_list if x in log_dict[epoch].keys()]:
+            log_data[k].extend(log_dict[epoch][k])
+
+    mtime = datetime.datetime.fromtimestamp(int(op.getmtime(json_logs[-1])))
+    db.run.update_one({"_id": run_id},
+                      {"$set": {"log_data_0": log_data,
+                                "host":host_name,
+                                "log_last_update":mtime}})
 
 def load_json_logs(json_logs):
     # load and convert json_logs to log_dict, key is epoch, value is a sub dict
@@ -156,14 +152,18 @@ def check_run_status():
     db = db_connector()
     runs = db.run.find({'host': host_name})
     for run in runs:
-        # check 'train_fail' or not.
-        check_fail(run, db)
-        # get metrics
-        get_metrics(run, db)
-        # get ETA
-        get_eta(run, db)
-        # check run detail
-        check_run_detail(run, db)
+        run_dir = run.get('run_dir', '')
+        if op.exists(run_dir):
+            # check 'train_fail' or not.
+            check_fail(run, db, run_dir)
+            # get metrics
+            get_metrics(run, db, run_dir)
+            # get ETA
+            get_eta(run, db, run_dir)
+            # check run detail
+            check_run_detail(run, db, run_dir)
+        else:
+            print("Info: directory not created for %s"%(run['_id']))
 
 
 def check_stop_runs():
