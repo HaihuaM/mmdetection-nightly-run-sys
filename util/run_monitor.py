@@ -13,6 +13,12 @@ def check_fail(run, db, run_dir):
     if 'running' in run['status']:
         run_id = run['_id']
         run_pid = run.get('pid',0)
+
+        if op.exists(op.join(run_dir, 'train.done')):
+            db.run.update_one({"_id": run_id},
+                          {"$set": {"status": 'train_done'}})
+            return 
+
         if run_pid:
             print("check thread for %s"%run_pid)
             try:
@@ -20,12 +26,8 @@ def check_fail(run, db, run_dir):
                 db.run.update_one({"_id": run_id},
                                   {"$set": {"status": 'train_running'}})
             except:
-                if op.exists(op.join(run_dir, 'train.done')):
-                    db.run.update_one({"_id": run_id},
-                                  {"$set": {"status": 'train_done'}})
-                else:
-                    db.run.update_one({"_id": run_id},
-                                  {"$set": {"status": 'train_fail'}})
+                db.run.update_one({"_id": run_id},
+                              {"$set": {"status": 'train_fail'}})
 
 def get_metrics(run, db, run_dir):
 
