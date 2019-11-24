@@ -37,14 +37,24 @@ class Run_Manager(object):
                     candidates = self.db.run.find({"$and":[
                         {request.stage+"_num_gpu":{"$lte": gpu_manager.num_gpu_available}}, 
                         {"status":request.pre_status}]}).sort("priority", -1)
+                    filter_candidates = list()
+                    for candidate in candidates:
+                        if candidate['status'] == "recovering":
+                            run_dir = candidate.get('run_dir','')
+                            if op.exists(run_dir):
+                                filter_candidates.append(candidate)
+                            else:
+                                print("Warning: %s is in recovering mode, seems it was on another host, skip."%(candidate['_id']))
+                        else:
+                            filter_candidates.append(candidate)
 
-                    setting = candidates[0]
+                    setting = filter_candidates[0]
+
                     selected_gpus = gpu_manager.assign_gpus(setting[request.stage+'_num_gpu'])
                     request.setup(setting, selected_gpus)
                     request.dump_script()
                     process_list.append(request.kick_off())
                 else:
-                    # print("No valid jobs for stage %s"%request.stage)
                     break
 
         if len(process_list):
