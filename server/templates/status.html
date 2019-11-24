@@ -38,14 +38,21 @@
                       </thead>
                       <tbody>
 												{% for item in tasks %}
-																{% for run in item.runs %}
+
 																<tr>
-																				{% if loop.index == 1 %}
-																				<td rowspan="{{ item.frequency }}" class="align-middle"> 
-																								{{ item.config_file }}
-																								<p><small>Notes: {{ item.description }} </small></p>
-																				</td>
-																				{% endif %}
+
+																{% if item.frequency ==0 %}
+																<td rowspan=1 class="align-middle"> 
+																{% else %}
+																<td rowspan="{{ item.frequency }}" class="align-middle"> 
+																{% endif %}
+
+																{{ item.config_file }}
+																<p><small>Notes: {{ item.description }} </small></p>
+																</td>
+
+																{% if item.runs|length > 0 %}
+																{% for run in item.runs %}
 																				<td class="align-middle">
 																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
 																				</td>
@@ -57,16 +64,16 @@
 																								{% if run.status == "train_done" %}
 																								<p class="text-success">all_done<p>
 																								{% endif %}
-																								{% if run.status == "train_running" %}
+																								{% if run.status == "train_running"  or run.status == "recovering" or run.status == "recover_running" %}
 																								<p class="text-info">{{ run.status }}<p>
 																								{% endif %}
 																								{% if run.status == "train_fail" %}
 																								<p class="text-danger">{{ run.status }}<p>
 																								{% endif %}
-																								{% if run.status == "pending" %}
+																								{% if run.status == "pending" or run.status == "train_stopped" %}
 																								<p class="text-warning">{{ run.status }}<p>
 																								{% endif %}
-																								{% if run.status == "deleting" %}
+																								{% if run.status == "deleting" or run.status == "stopping" %}
 																								<p class="text-warning">{{ run.status }}<p>
 																								{% endif %}
 																								<p><small>{{ run.log_last_update }} </small></p>
@@ -77,28 +84,55 @@
                                         <td class="align-middle">
 																		    {% if modify %}
 																						<button onclick="deleteValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button>
+																						<button onclick="stopValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#stopModal"> Stop</button>
 
 																						<button onclick="rescheduleValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Reschedule</button>
-																						<button onclick="finetuneValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Finetune(+2)</button>
+																						<button onclick="recoverValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#recoverModal">Recover</button>
 																						<button  type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"> Compare</button>
 																				{% else %}
-																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Delete </button>
+																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Stop</button>
 																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Reschedule</button>
-																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Finetune(+2)</button>
+																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Recover</button>
 																						<button type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"> Compare</button>
 																				{% endif %}
 																				</td>
+
 																				{% if loop.index == 1 %}
-                                        <td rowspan="{{ item.frequency }}" class="align-middle">
+																				  {% if item.frequency ==0 %}
+																								<td rowspan=1 class="align-middle"> 
+																					{% else %}
+                                                <td rowspan="{{ item.frequency }}" class="align-middle">
+																					{% endif %}
 																								{% if modify %}
 																										<button onclick="addrunValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#addrunModal">Add</button>
+																										<button onclick="editValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#editModal">Edit</button>
 																								{% else %}
 																										<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal">Add</button>
 																								{% endif %}
-																				</td>
+																				        </td>
 																				{% endif %}
+
 																</tr>
 																{% endfor %}
+																{% else %}
+																<td>
+																<td>
+																<td>
+																<td>
+																<td>
+																<td>
+																<td>
+																<td rowspan=1 class="align-middle"> 
+																				{% if modify %}
+																						<button onclick="addrunValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#addrunModal">Add</button>
+																				{% else %}
+																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal">Add</button>
+																				{% endif %}
+																</td>
+																</tr>
+																{% endif %}
+
+
 
 												{% endfor %}
                       </tbody>
@@ -124,6 +158,28 @@
 	  </div>
 	 </div>
 
+		<!-- delete Modal -->
+		<div class="modal fade" id="stopModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="stop_run_id" name="stop_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Stop Run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to stop the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="stopRun()" type="button" class="btn btn-primary" data-dismiss="modal">Stop</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+
 		<!-- Reschedule Modal -->
 		<div class="modal fade" id="rescheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -144,6 +200,27 @@
 	  </div>
 	 </div>
 
+		<!-- Reschedule Modal -->
+		<div class="modal fade" id="recoverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="recover_run_id" name="recover_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Reschedule the run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to recover the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="recoverRun()" type="button" class="btn btn-primary" data-dismiss="modal">Recover</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
 		<!-- Add Run Modal -->
 		<div class="modal fade" id="addrunModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
@@ -163,6 +240,28 @@
 		  </div>
 	  </div>
 	 </div>
+
+		<!-- Edit Run Modal -->
+		<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="edit_config_id" name="edit_config_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit Config</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to add a new run for this config?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="editConfig()" type="button" class="btn btn-primary" data-dismiss="modal">Edit</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
 
 		<!-- Compare Modal -->
 		<div class="modal fade modal-xl" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="width:90%">
@@ -217,7 +316,7 @@
 			
 			</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="addexpRuns()" type="button" class="btn btn-info" data-dismiss="modal">Add to Exp</button>
 					<button onclick="compareRuns()" type="button" class="btn btn-primary" data-dismiss="modal">Compare</button>
 				</div>
 		  </div>
@@ -251,15 +350,6 @@
     </div>
 					{% include "script.html" %}
           <script src="/static/js/btn-custom.js"></script>
-					<!-- <link href="/static/css/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
-					<!-- <script src="/static/js/jquery.dataTables.min.js"></script> -->
-					<!-- <script src="/static/js/dataTables.bootstrap4.min.js"></script> -->
-					<!-- <script> -->
-					<!-- 			$(document).ready(function() { -->
-					<!-- 								$('#status-data-table').DataTable(); -->
-					<!-- 			}); -->
-
-          <!-- </script> -->
 					<script>
 					</script>
 

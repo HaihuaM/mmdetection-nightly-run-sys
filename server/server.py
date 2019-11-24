@@ -52,6 +52,61 @@ def view_status():
 
     return render_template('status.html', tasks=task_list, modify=False)
 
+@app.route('/view/experiments.html')
+def view_eperiments():
+    db = db_connector()
+    db_exps = db.exp.find({})
+    exps = list()
+    for idx, exp in enumerate(db_exps):
+        runs = exp['exp_runs']
+        run_list = list()
+        for run in runs:
+            config_file = run['config_file']
+            run['config_file'] = op.basename(config_file)
+            run_list.append(run)
+        exp.update({'exp_runs': run_list})
+        exps.append(exp)
+
+    return render_template('experiments.html', exps=exps, modify=False)
+
+@app.route('/noallow/experiments.html')
+def eperiments():
+    db = db_connector()
+    db_exps = db.exp.find({})
+    exps = list()
+    for idx, exp in enumerate(db_exps):
+        runs = exp['exp_runs']
+        run_list = list()
+        for run in runs:
+            config_file = run['config_file']
+            run['config_file'] = op.basename(config_file)
+            run_list.append(run)
+        exp.update({'exp_runs': run_list})
+        exps.append(exp)
+
+    return render_template('experiments.html', exps=exps, modify=True)
+
+
+@app.route('/addexp/<exp_id>')
+def add_experiment(exp_id):
+    db = db_connector()
+    exp_check = db.exp.count_documents({'exp_id':exp_id})
+    if exp_check >0 :
+        return jsonify(0)
+    else:
+        _run_ids = exp_id.split('_')
+        exp_description = "Experiment runs, please update the content..."
+        exp_runs = list()
+        for run_id in _run_ids:
+            run = db.run.find_one({'_id':ObjectId(run_id)})
+            exp_runs.append(run)
+        db.exp.insert_one({'exp_description': exp_description,
+                           'exp_runs': exp_runs,
+                           'num_runs': len(exp_runs),
+                           'exp_id': exp_id})
+        return jsonify('Inserted.')
+
+
 @app.route('/json/status')
 def json_status():
     runs = get_summay_status()
@@ -105,6 +160,13 @@ def delete(run_id):
             {"$set":{"status": "deleting"}})
 
     return jsonify('Pending for deleting.')
+
+@app.route('/deleteexp/<exp_id>')
+def delete_exp(exp_id):
+    db = db_connector()
+    db.exp.delete_one({'exp_id':exp_id})
+
+    return jsonify('Deleted.')
 
 @app.route('/stop/<run_id>')
 def stop(run_id):
@@ -168,7 +230,6 @@ def add_run(task_id):
     task = db.scheduler.find_one({'_id': task_id})
     host_name = os.uname().nodename
     num_pre_runs = task['frequency']
-    # print(num_pre_runs)
 
     run_list = task['run_ids']
     if len(run_list)==0:
@@ -391,7 +452,8 @@ def get_summary():
 def db_connector():
 
     from pymongo import MongoClient
-    client = MongoClient('219.228.57.73', 27017,
+    # client = MongoClient('219.228.57.73', 27017,
+    client = MongoClient('127.0.0.1', 27017,
                          username='dbadmin',
                          password='daohaosiquanjia')
 
