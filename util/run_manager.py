@@ -38,7 +38,7 @@ class Run_Manager(object):
                         {request.stage+"_num_gpu":{"$lte": gpu_manager.num_gpu_available}}, 
                         {"status":request.pre_status}]}).sort("priority", -1)
                     filter_candidates = list()
-                    for candidate in database:
+                    for candidate in candidates:
                         if candidate['status'] == "recovering":
                             run_dir = candidate.get('run_dir','')
                             if op.exists(run_dir):
