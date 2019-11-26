@@ -7,6 +7,7 @@ import shutil
 import socket
 import subprocess
 from multiprocessing import Process
+import psutil
 
 
 class Job_Requestor(object):
@@ -93,19 +94,7 @@ def process_kick_off(setting, script_dir, stage):
     db = db_connector()
     db.run.update_one({'_id': _id},
             {"$set": {"pid": process_pid}})
-    # process.wait()
 
-    # if op.exists(op.join(run_dir, stage+".done")):
-    #     status = "all_done" if (stage == "train") \
-    #             else (stage + "_done")
-    # else:
-    #     status = stage + "_fail"
-
-    # print("Info: update status <%s> into db "%status)
-    # # New db connector, avoid warining use connection before into subprocess
-    # db = db_connector()
-    # db.run.update_one({'_id': _id},
-    #         {"$set": {"status":status }})
 
 class Train(Job_Requestor):
     
