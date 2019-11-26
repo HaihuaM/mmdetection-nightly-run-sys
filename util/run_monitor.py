@@ -105,6 +105,8 @@ def check_run_detail(run, db, run_dir):
 
     if len(json_logs)<1:
         return
+    if len(json_logs)>1:
+        print("There are two json logs for %s"%run_id)
 
     json_logs.sort(key=os.path.getmtime) 
     log_dict = load_json_logs(json_logs)
@@ -131,20 +133,19 @@ def load_json_logs(json_logs):
     # log_dicts = [dict() for _ in json_logs]
     log_dict = dict()
     for json_log in json_logs:
-        base_ep = 0
+        # base_ep = 0
         with open(json_log, 'r') as log_file:
             max_ep = 0
             for l in log_file:
                 log = json.loads(l.strip())
-                epoch = int(log.pop('epoch')) + base_ep
-                max_ep = epoch if epoch > max_ep else max_ep
+                epoch = int(log.pop('epoch')) 
                 log.pop('mode')
                 log.pop('iter')
                 if epoch not in log_dict:
                     log_dict[epoch] = defaultdict(list)
                 for k, v in log.items():
                     log_dict[epoch][k].append(v)
-        base_ep = max_ep
+        # base_ep = max_ep
     return log_dict
 
 
@@ -191,6 +192,17 @@ def check_stop_runs():
                 db.run.update_one({'_id':run_id}, 
                                     {"$set": {"status": "train_stopped"}})
 
+def check_recover_runs():
+    host_name = os.uname().nodename
+    db = db_connector()
+    runs = db.run.find({'status': 'recovering', 'host':host_name})
+    for run in runs:
+        run_dir = run.get('run_dir', '')
+        done_lock = op.join(run_dir, 'train.done')
+        if op.exists(done_lock):
+            process = subprocess.Popen("/bin/rm -rf %s"%(done_lock), shell=True)
+            process.wait()
+            print("Remove done lock for recovering run.")
 
 def check_deleting_runs():
     host_name = os.uname().nodename
@@ -238,3 +250,4 @@ if __name__ == "__main__":
     check_run_status()
     check_deleting_runs()
     check_stop_runs()
+    check_recover_runs()
