@@ -31,12 +31,12 @@ class Run_Manager(object):
                 request = job_request()
                 num_candidates = self.db.run.count_documents({"$and":[
                     {request.stage+"_num_gpu":{"$lte": gpu_manager.num_gpu_available}}, 
-                    {"status":request.pre_status}]})
+                    {"status":request.pre_status}, {"farm":"FALSE"}]})
 
                 if num_candidates > 0:
                     candidates = self.db.run.find({"$and":[
                         {request.stage+"_num_gpu":{"$lte": gpu_manager.num_gpu_available}}, 
-                        {"status":request.pre_status}]}).sort("priority", -1)
+                        {"status":request.pre_status}, {"farm":False}]}).sort("priority", -1)
                     filter_candidates = list()
                     for candidate in candidates:
                         if candidate['status'] == "recovering":

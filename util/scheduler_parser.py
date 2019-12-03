@@ -57,6 +57,8 @@ def register_runs(task):
     """
     db = db_connector()
     scheduler = db.scheduler
+    farm = task.get('farm', 'False')
+    task.update({'farm': farm.upper()})
     task.update({'assign_status': False})
     task.update({'submitted_time': datetime.datetime.now()})
     scheduler.insert_one(task)
@@ -71,6 +73,9 @@ def append_runs(task_info, setting):
     host_name = os.uname().nodename
     
     freq = setting['frequency']
+    farm = setting.get('farm', 'False')
+    setting.update({'farm': farm.upper()})
+
     _filtered_fileds = ["_id", "assign_status", "frequency"]
     
     for idx in range(freq):
