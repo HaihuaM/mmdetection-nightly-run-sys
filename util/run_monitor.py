@@ -164,7 +164,10 @@ def check_run_status():
             # get ETA
             get_eta(run, db, run_dir)
             # check run detail
-            check_run_detail(run, db, run_dir)
+            try:
+                check_run_detail(run, db, run_dir)
+            except:
+                print("Warning there are log errors in %s"%(run_dir))
         else:
             print("Info: directory not created for %s"%(run['_id']))
 
@@ -229,11 +232,11 @@ def check_deleting_runs():
                 print("Job process not exits.")
 
         # Clean directory
-        if op.exists(run_dir):
-            process = subprocess.Popen("/bin/rm -rf %s"%(op.dirname(run_dir)), shell=True)
-            process.wait()
-        else: 
-            pass
+        # if op.exists(run_dir):
+        #     process = subprocess.Popen("/bin/rm -rf %s"%(op.dirname(run_dir)), shell=True)
+        #     process.wait()
+        # else: 
+        #     pass
     
         if run_id in run_id_list:
            run_id_list.remove(run_id)
