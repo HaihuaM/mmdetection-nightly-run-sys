@@ -44,7 +44,7 @@ def get_metrics(run, db, run_dir):
     db.run.update_one({"_id": run_id},
                       {"$set": {"current_epoch": current_epoch}})
     logs = glob(op.join(run_dir, "*.log.json"))
-    logs.sort(key=os.path.getmtime) 
+    logs.sort() 
     if len(logs)<1:
         print("Warning: No json log in %s, skip."%(run_dir))
         return 
@@ -79,7 +79,7 @@ def get_eta(run, db, run_dir):
     else:
         train_logs = glob(op.join(run_dir, "*.log"))
         train_logs = [ x for x in train_logs if re.search(r'\d{8}_\d{6}.log$', x)]
-        train_logs.sort(key=os.path.getmtime) 
+        train_logs.sort() 
         if len(train_logs)<0:
             pass
         else:
@@ -108,7 +108,7 @@ def check_run_detail(run, db, run_dir):
     if len(json_logs)>1:
         print("There are two json logs for %s"%run_id)
 
-    json_logs.sort(key=os.path.getmtime) 
+    json_logs.sort() 
     log_dict = load_json_logs(json_logs)
 
     log_data = defaultdict(list)
