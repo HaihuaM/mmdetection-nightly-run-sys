@@ -1,6 +1,7 @@
 from flask import Flask, redirect
 from flask import render_template
 from flask import jsonify
+from flask import request
 import psutil
 import shutil
 import os
@@ -14,11 +15,116 @@ import subprocess
 app = Flask(__name__)
 
 @app.route('/')
+@app.route('/noallow/endex.html')
 @app.route('/index.html')
 def check_run_status():
     # return render_template('status.html')
     summary = get_summary()
     return render_template('index.html', summary=summary)
+
+@app.route('/edit_task', methods=["POST"])
+def edit_task():
+    # print(request.form)
+    form = request.form.to_dict()
+    task_id = ObjectId(form['task_id'])
+    update = {k:v for k, v in form.items() if k != 'task_id'}
+
+    int_keys = ['train_num_gpu', 'recover_num_gpu', 'priority']
+
+    for k,v in update.items():
+        if k in int_keys:
+            update[k] = int(update[k])
+
+    farm = update.get('farm','False')
+    update.update({'farm':farm.upper()})
+
+    db = db_connector()
+    result = db.scheduler.update_one({'_id': task_id},
+                                   {"$set":update})
+    if result.modified_count == 1:
+        return jsonify(1)
+    else:
+        return jsonify(0)
+
+@app.route('/edit_paper', methods=["POST"])
+def edit_paper():
+    # print(request.form)
+    form = request.form.to_dict()
+    print(form)
+    paper_id = ObjectId(form['paper_id'])
+    update = {k:v for k, v in form.items() if k != 'paper_id'}
+    db = db_connector()
+    result = db.lit.update_one({'_id': paper_id},
+                                   {"$set":update})
+    if result.modified_count == 1:
+        return jsonify(1)
+    else:
+        return jsonify(0)
+
+@app.route('/edit_run', methods=["POST"])
+def edit_run():
+    # print(request.form)
+    form = request.form.to_dict()
+    run_id = ObjectId(form['run_id'])
+    update = {k:v for k, v in form.items() if k != 'run_id'}
+
+    int_keys = ['train_num_gpu', 'recover_num_gpu', 'priority']
+
+    farm = update.get('farm','False')
+    update.update({'farm':farm.upper()})
+
+    for k,v in update.items():
+        if k in int_keys:
+            update[k] = int(update[k])
+
+    # Work around
+    db = db_connector()
+    result = db.run.update_one({'_id': run_id},
+                                   {"$set":update})
+    if result.modified_count == 1:
+        return jsonify(1)
+    else:
+        return jsonify(0)
+
+
+@app.route('/addlit', methods=["POST"])
+def addlit():
+    form = request.form.to_dict()
+    db = db_connector()
+    paper_title = form['paper_title']
+    paper_check = db.lit.count_documents({'paper_title':paper_title})
+    if paper_check>0:
+        return jsonify(0)
+    else:
+        lit_id = db.lit.insert_one(form)
+        return jsonify(1)
+
+@app.route('/addconfig', methods=["POST"])
+def addconfig():
+    form = request.form.to_dict()
+    print(form)
+    int_keys = ['train_num_gpu', 'priority']
+    bool_keys = ['farm']
+    # W/A for html form cannot pass value when check-box is not selected.
+    for k in bool_keys:
+        form_ks = form.keys()
+        if k not in form_ks:
+            form.update({k: 'FALSE'})
+    for k,v in form.items():
+        # Convert int keys
+        if k in int_keys:
+            form[k] = int(form[k])
+        # Convert bool keys
+        if k in bool_keys:
+            if form[k]=='on':
+                form[k] = "TRUE"
+    # print(form)
+    db = db_connector()
+    inserted_id = db.scheduler.insert_one(form).inserted_id
+    if inserted_id:
+        return jsonify(str(inserted_id))
+    else:
+        return jsonify(0)
 
 @app.route('/noallow/status.html')
 def status():
@@ -29,13 +135,14 @@ def status():
         config_file = task['config_file']
         task['config_file'] = op.basename(config_file)
         run_list = list()
-        for run_id in task['run_ids']:
+        for run_id in task.get('run_ids', []):
             run_list.append(get_run_status(run_id))
         task.update({'runs': run_list})
         task_list.append(task)
 
-    return render_template('status.html', tasks=task_list, modify=True)
+    return render_template('status.html', tasks=task_list, modify='true')
 
+@app.route('/status.html')
 @app.route('/view/status.html')
 def view_status():
     db = db_connector()
@@ -45,13 +152,27 @@ def view_status():
         config_file = task['config_file']
         task['config_file'] = op.basename(config_file)
         run_list = list()
-        for run_id in task['run_ids']:
+        for run_id in task.get('run_ids', []):
             run_list.append(get_run_status(run_id))
         task.update({'runs': run_list})
         task_list.append(task)
 
-    return render_template('status.html', tasks=task_list, modify=False)
+    return render_template('status.html', tasks=task_list, modify='false')
 
+@app.route('/literature.html')
+@app.route('/view/literature.html')
+def view_literature():
+    db = db_connector()
+    papers = db.lit.find({})
+    return render_template('literature.html', papers=papers, modify='false')
+
+@app.route('/noallow/literature.html')
+def literature():
+    db = db_connector()
+    papers = db.lit.find({})
+    return render_template('literature.html', papers=papers, modify='true')
+
+@app.route('/experiments.html')
 @app.route('/view/experiments.html')
 def view_eperiments():
     db = db_connector()
@@ -66,8 +187,7 @@ def view_eperiments():
             run_list.append(run)
         exp.update({'exp_runs': run_list})
         exps.append(exp)
-
-    return render_template('experiments.html', exps=exps, modify=False)
+    return render_template('experiments.html', exps=exps, modify='false')
 
 @app.route('/noallow/experiments.html')
 def eperiments():
@@ -131,6 +251,8 @@ def detail(run_id):
                                metrics=metrics,
                                compare_mode=False)
 
+
+
 @app.route('/compare/<compare_id>')
 def compare(compare_id):
     db = db_connector()
@@ -165,6 +287,14 @@ def delete(run_id):
 def delete_exp(exp_id):
     db = db_connector()
     db.exp.delete_one({'exp_id':exp_id})
+
+    return jsonify('Deleted.')
+
+@app.route('/deletepaper/<paper_id>')
+def delete_paper(paper_id):
+    db = db_connector()
+    paper_id = ObjectId(paper_id)
+    db.lit.delete_one({'_id':paper_id})
 
     return jsonify('Deleted.')
 
@@ -229,9 +359,9 @@ def add_run(task_id):
     task_id = ObjectId(task_id)
     task = db.scheduler.find_one({'_id': task_id})
     host_name = os.uname().nodename
-    num_pre_runs = task['frequency']
+    num_pre_runs = task.get('frequency', 0)
 
-    run_list = task['run_ids']
+    run_list = task.get('run_ids', [])
     if len(run_list)==0:
         run_idx = 0
     else:
@@ -239,7 +369,7 @@ def add_run(task_id):
         latest_run = db.run.find_one({'_id': latest_run_id})
         run_idx = latest_run['run_idx'] + 1
 
-    _filtered_fileds = ["_id", "assign_status", "frequency"]
+    _filtered_fileds = ["_id", "assign_status", "frequency", "run_ids"]
 
     run_setting = {key:value for key, value in task.items() \
             if (key not in _filtered_fileds)}
@@ -266,6 +396,55 @@ def register_run(run_setting):
     db = db_connector()
     run = db.run
     return run.insert_one(run_setting).inserted_id
+
+
+@app.route('/taskinfo/<task_id>')
+def task_info(task_id):
+    db = db_connector()
+    task_id = ObjectId(task_id)
+    task = db.scheduler.find_one({'_id': task_id})
+    filtered_keys = ['_id', 
+                     'run_ids', 
+                     'assign_status', 
+                     'frequency', 
+                     'submitted_time',
+                     'analyze_num_gpu']
+    use_keys = ['config_file', 'description', 'train_num_gpu', 'priority', 'farm']
+
+    # task = {k:v for k,v in task.items() if k not in filtered_keys}
+    task = {k:v for k,v in task.items() if k in use_keys}
+    print(task)
+    return jsonify(task)
+
+@app.route('/paperinfo/<paper_id>')
+def paper_info(paper_id):
+    db = db_connector()
+    paper_id = ObjectId(paper_id)
+    paper = db.lit.find_one({'_id': paper_id})
+    filtered_keys = ['_id', 
+                     'run_ids', 
+                     'assign_status', 
+                     'frequency', 
+                     'submitted_time',
+                     'analyze_num_gpu']
+    use_keys = ['paper_title', 'paper_link', 'paper_tags']
+
+    paper = {k:v for k,v in paper.items() if k in use_keys}
+    return jsonify(paper)
+
+@app.route('/runinfo/<run_id>')
+def run_info(run_id):
+    db = db_connector()
+    run_id = ObjectId(run_id)
+    run = db.run.find_one({'_id': run_id})
+    use_keys = ['priority', 
+                'train_num_gpu', 
+                'status', 
+                'farm',
+                'config_file']
+
+    run = {k:v for k,v in run.items() if k in use_keys}
+    return jsonify(run)
 
 
 @app.route('/gpu_util')
@@ -350,6 +529,49 @@ def compare_run_status(compare_id):
         run_data.append(_data)
 
     return jsonify({'data':run_data, 'names':names})
+
+
+@app.route('/compare/status.html')
+def redirect_compare_status():
+    return redirect("/status.html", code=302)
+
+@app.route('/compare/index.html')
+def redirect_compare_index():
+    return redirect("/index.html", code=302)
+
+@app.route('/noallow/index.html')
+def redirect_nowallow_index():
+    return redirect("/index.html", code=302)
+
+@app.route('/view/index.html')
+def redirect_view_index():
+    return redirect("/index.html", code=302)
+
+@app.route('/compare/experiments.html')
+def redirect_compare_experiments():
+    return redirect("/experiments.html", code=302)
+
+@app.route('/compare/literature.html')
+def redirect_compare_literature():
+    return redirect("/literature.html", code=302)
+
+@app.route('/detail/status.html')
+def redirect_detail_status():
+    return redirect("/status.html", code=302)
+
+@app.route('/detail/index.html')
+def redirect_detail_index():
+    return redirect("/index.html", code=302)
+
+@app.route('/detail/experiments.html')
+def redirect_detail_experiments():
+    return redirect("/experiments.html", code=302)
+
+@app.route('/detail/literature.html')
+def redirect_detail_literature():
+    return redirect("/literature.html", code=302)
+
+
 
 def bytes_2_human_readable(number_of_bytes):
     """Convert byters to readable format.
@@ -445,10 +667,6 @@ def get_summary():
 
     return summary
 
-
-
-
-
 def db_connector():
 
     from pymongo import MongoClient
@@ -461,5 +679,8 @@ def db_connector():
     db = client.ob_tracker
 
     return db
+
+
+
 
 
