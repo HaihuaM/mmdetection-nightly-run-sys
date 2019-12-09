@@ -102,7 +102,7 @@ def addlit():
 @app.route('/addconfig', methods=["POST"])
 def addconfig():
     form = request.form.to_dict()
-    print(form)
+    # print(form)
     int_keys = ['train_num_gpu', 'priority']
     bool_keys = ['farm']
     # W/A for html form cannot pass value when check-box is not selected.
@@ -282,6 +282,16 @@ def delete(run_id):
             {"$set":{"status": "deleting"}})
 
     return jsonify('Pending for deleting.')
+
+@app.route('/delete_conf/<task_id>')
+def delete_config(task_id):
+    db = db_connector()
+    task_id = ObjectId(task_id) 
+    # db.run.update_one({'_id':run_id},
+    #         {"$set":{"status": "deleting"}})
+    task = db.scheduler.delete_one({'_id': task_id})
+
+    return jsonify('Deleted.')
 
 @app.route('/deleteexp/<exp_id>')
 def delete_exp(exp_id):

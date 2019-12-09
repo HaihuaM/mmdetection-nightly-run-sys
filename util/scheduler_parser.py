@@ -42,11 +42,8 @@ def task_conf_parser(config_file):
                 append_runs(indb_run, schedulers[task])
                 num_success_registered += 1
         else:
-            if os.path.exists(config_file):
-                register_runs(schedulers[task])
-                num_success_registered += 1
-            else:
-                print("Warning: %s cannot access in <%s>."%(config_file,task))
+            register_runs(schedulers[task])
+            num_success_registered += 1
     print("INFO: %s tasks registered."%(num_success_registered))
 
 def register_runs(task):
