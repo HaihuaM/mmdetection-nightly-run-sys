@@ -12,7 +12,7 @@ import psutil
 
 class Job_Requestor(object):
 
-    run_center = "/obtrack/nightly_run"
+    run_center = "/scratch/obtrack/nightly_run"
     data_dir = "/home/haihuam/Projects/RepPoints/data"
 
     def __init__(self):
@@ -121,12 +121,12 @@ class Train(Job_Requestor):
         try: 
             os.makedirs(run_dir)
             os.makedirs(back_dir)
+            os.symlink(Job_Requestor.data_dir, op.join(run_dir, 'data')) 
+
         except:
             print("Error: run dir %s create failed"%(run_dir))
-            sys.exit(0)
+            # sys.exit(0)
     
-        os.symlink(Job_Requestor.data_dir, op.join(run_dir, 'data')) 
-        
         self.run_dir = run_dir
         self.setting.update({'run_dir':run_dir})
         self._db_update({'run_dir': run_dir})
@@ -154,6 +154,9 @@ class Train(Job_Requestor):
         train_py = "/home/haihuam/Projects/RepPoints/mmdetection/tools/train.py"
         py = self.global_setting.get('python', sys.executable)
         ex_options = self.global_setting.get('train_options', str())
+
+        if not os.access(py, os.X_OK):
+            py = "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
         
         if os.access(py, os.X_OK):
             content = "set -e \n"
@@ -182,6 +185,10 @@ class Train(Job_Requestor):
         py = self.global_setting.get('python', sys.executable)
         ex_options = self.global_setting.get('train_options', str())
         train_py = "/home/haihuam/Projects/RepPoints/mmdetection/tools/train.py"
+
+        if not os.access(py, os.X_OK):
+            py = "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
+
         if os.access(py, os.X_OK):
             content = "set -e \n"
             content += "export CUDA_VISIBLE_DEVICES=" + \
@@ -246,6 +253,9 @@ class Recover(Job_Requestor):
         train_py = "/home/haihuam/Projects/RepPoints/mmdetection/tools/train.py"
         py = self.global_setting.get('python', sys.executable)
         ex_options = self.global_setting.get('train_options', str())
+
+        if not os.access(py, os.X_OK):
+            py = "/home/haihuam/anaconda3/envs/RepPoints/bin/python"
         
         if os.access(py, os.X_OK):
             content = "set -e \n"
