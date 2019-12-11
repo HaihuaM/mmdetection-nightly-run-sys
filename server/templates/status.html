@@ -18,11 +18,18 @@
         <div class="container-fluid">
           <!-- Page Header-->
           <header> 
-            <h1 class="h3 display">Status Details</h1>
+				<div class="col-sm-1">
+				 <div class="card text-center" >
+					<div class="card-header small"> Operation </div>
+					<!-- <div class="card-body"> -->
+						<a href="#" style="text-decoration: none" class="admin-operation btn btn-light" data-toggle="modal" data-target="#addConfigModal">Add Run</a>
+					<!-- </div> -->
+				 </div>
+				</div>
           </header>
           <div class="container">
-            <div class="col-sm-6 ">
-                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
+            <div class="col-sm-7 ">
+                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:60%">
                       <thead>
                         <tr>
                           <th>Config</th>
@@ -54,9 +61,10 @@
 																{% if item.runs|length > 0 %}
 																{% for run in item.runs %}
 																				<td class="align-middle">
-																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
+																					<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit Run"> 
+																					<button onclick="editRunValues('{{ run._id }}')" type="button" class="admin-operation btn btn-light btn-circle btn-circle-sm m-1" data-toggle="modal" data-target="#editRunModal"><i class="fa fa-cog"></i></button> </span>
 																				</td>
-																				<td class="align-middle"><small>{{ run.host }}</small></td>
+																				<td class="align-middle" onclick="copyRunDir('{{ run.run_dir }}')" ><small>{{ run.host }}</small></td>
 																				<td class="align-middle">
 																								{% if run.status == "all_done" %}
 																								<p class="text-success">{{ run.status }}<p>
@@ -81,267 +89,44 @@
 																				<td class="align-middle">{{ run.current_eval_html | safe }}</td>
 																				<td class="align-middle">{{ run.current_epoch }}</td>
 																				<td class="align-middle">{{ run.est_remaining_time }}</td>
-                                        <td class="align-middle">
-																		    {% if modify %}
-																						<button onclick="deleteValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#deleteModal"> Delete </button>
-																						<button onclick="stopValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#stopModal"> Stop</button>
+                                        <td align="center" class="align-middle">
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Delete Run"><button onclick="deleteValues('{{ run._id }}')" type="button" class="admin-operation btn btn-block btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal"><i class="fa fa-trash-o"></i></button></span>
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Stop Run"><button onclick="stopValues('{{ run._id }}')" type="button" class="admin-operation btn btn-block btn-sm btn-warning" data-toggle="modal" data-target="#stopModal"><i class="fa fa-stop-circle"></i></button></span>
 
-																						<button onclick="rescheduleValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#rescheduleModal"> Reschedule</button>
-																						<button onclick="recoverValues('{{ run._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#recoverModal">Recover</button>
-																						<button  type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"> Compare</button>
-																				{% else %}
-																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Stop</button>
-																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Reschedule</button>
-																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal"> Recover</button>
-																						<button type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"> Compare</button>
-																				{% endif %}
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Recover Run">	<button onclick="recoverValues('{{ run._id }}')" type="button" class="admin-operation btn btn-block btn-sm btn-info" data-toggle="modal" data-target="#recoverModal"><i class="fa fa-repeat"></i></button></span>
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Compare Run Results"><button  type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#compareModal"><i class="fa fa-binoculars"></i></button></span>
 																				</td>
 
-																				{% if loop.index == 1 %}
-																				  {% if item.frequency ==0 %}
-																								<td rowspan=1 class="align-middle"> 
-																					{% else %}
-                                                <td rowspan="{{ item.frequency }}" class="align-middle">
-																					{% endif %}
-																								{% if modify %}
-																										<button onclick="addrunValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#addrunModal">Add</button>
-																										<button onclick="editValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#editModal">Edit</button>
-																								{% else %}
-																										<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal">Add</button>
-																								{% endif %}
-																				        </td>
-																				{% endif %}
+																{% if loop.index == 1 %}
+																	{% if item.frequency ==0 %}
+																				<td align="center" rowspan=1 class="align-middle"> 
+																	{% else %}
+																				<td align="center" rowspan="{{ item.frequency }}" class="align-middle">
+																	{% endif %}
+																	<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Add Run"><button onclick="addrunValues('{{ item._id }}')" type="button" class="admin-operation btn btn-block btn-xl btn-light btn-circle" data-toggle="modal" data-target="#addrunModal"><i class="fa fa-plus-circle"></i></button></span>
+																	<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit Config"><button onclick="editValues('{{ item._id }}')" type="button" class="admin-operation btn btn-block btn-xl btn-light btn-circle" data-toggle="modal" data-target="#editModal"><i class="fa fa-cog"></i></button></span>
+																	<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Delete Run"><button onclick="deleteConfValues('{{ item._id }}')" type="button" class="admin-operation btn btn-block btn-xl btn-light" data-toggle="modal" data-target="#deleteConfigModal"><i class="fa fa-trash-o"></i></button></span>
+																				</td>
+																{% endif %}
 
 																</tr>
 																{% endfor %}
 																{% else %}
-																<td>
-																<td>
-																<td>
-																<td>
-																<td>
-																<td>
-																<td>
-																<td rowspan=1 class="align-middle"> 
-																				{% if modify %}
-																						<button onclick="addrunValues('{{ item._id }}')" type="button" class="btn btn-block btn-sm btn-primary" data-toggle="modal" data-target="#addrunModal">Add</button>
-																				{% else %}
-																						<button type="button" class="btn btn-sm btn-block btn-primary" data-toggle="modal" data-target="#hintModal">Add</button>
-																				{% endif %}
-																</td>
+																<td> <td> <td> <td> <td> <td> <td>
+																				<td align="center" rowspan=1 class="align-middle"> 
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Add Run"><button onclick="addrunValues('{{ item._id }}')" type="button" class="admin-operation btn btn-block btn-xl btn-light btn-circle" data-toggle="modal" data-target="#addrunModal"><i class="fa fa-plus-circle"></i></button></span>
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit Config"><button onclick="editValues('{{ item._id }}')" type="button" class="admin-operation btn btn-block btn-xl btn-light btn-circle" data-toggle="modal" data-target="#editModal"><i class="fa fa-cog"></i></button></span>
+																	<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Delete Run"><button onclick="deleteConfValues('{{ item._id }}')" type="button" class="admin-operation btn btn-block btn-xl btn-light" data-toggle="modal" data-target="#deleteConfigModal"><i class="fa fa-trash-o"></i></button></span>
+																				</td>
 																</tr>
 																{% endif %}
 
-
-
 												{% endfor %}
                       </tbody>
                     </table>
 
-		<!-- delete Modal -->
-		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="delete_run_id" name="delete_run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Delete Run</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> Are you sure to delete the run?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button onclick="deleteRun()" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
+										{% include "modal.html" %}
 
-		<!-- delete Modal -->
-		<div class="modal fade" id="stopModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="stop_run_id" name="stop_run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Stop Run</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> Are you sure to stop the run?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button onclick="stopRun()" type="button" class="btn btn-primary" data-dismiss="modal">Stop</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
-
-
-
-		<!-- Reschedule Modal -->
-		<div class="modal fade" id="rescheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="rescheduler_run_id" name="rescheduler_run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Reschedule the run</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> Are you sure to reshedule the run?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button onclick="rescheduleRun()" type="button" class="btn btn-primary" data-dismiss="modal">Reschedule</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
-
-		<!-- Reschedule Modal -->
-		<div class="modal fade" id="recoverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="recover_run_id" name="recover_run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Reschedule the run</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> Are you sure to recover the run?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button onclick="recoverRun()" type="button" class="btn btn-primary" data-dismiss="modal">Recover</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
-
-
-		<!-- Add Run Modal -->
-		<div class="modal fade" id="addrunModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Add a run</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> Are you sure to add a new run for this config?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button onclick="addRun()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
-
-		<!-- Edit Run Modal -->
-		<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="edit_config_id" name="edit_config_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Edit Config</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> Are you sure to add a new run for this config?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button onclick="editConfig()" type="button" class="btn btn-primary" data-dismiss="modal">Edit</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
-
-
-
-		<!-- Compare Modal -->
-		<div class="modal fade modal-xl" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="width:90%">
-		<div class="modal-dialog modal-lg" style="width:90%" role="document">
-      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Compare between different runs</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body"> 
-							<div class="custom-control custom-checkbox">
-			
-                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
-                      <thead>
-                        <tr>
-                          <th>Config</th>
-                          <th>Run ID</th>
-                          <th>Current Epoch</th>
-                          <th>Select</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-												{% for item in tasks %}
-																{% for run in item.runs %}
-																<tr>
-																				{% if loop.index == 1 %}
-																				<td rowspan="{{ item.frequency }}" class="align-middle"> 
-																								{{ item.config_file }}
-																								<p><small>Notes: {{ item.description }} </small></p>
-																				</td>
-																				{% endif %}
-																				<td class="align-middle">
-																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
-																				</td>
-																				<td class="align-middle">{{ run.current_epoch }}</td>
-																				<td>
-																								<div class="custom-control custom-checkbox">
-																												<input name="compare-runs-checkbox" type="checkbox" class="custom-control-input" id="check-box-{{ run._id }}" value="{{run._id}}">
-																												<label class="custom-control-label" for="check-box-{{ run._id }}"></label>
-																								</div>
-																				</td>
-																</tr>
-																{% endfor %}
-
-												{% endfor %}
-                      </tbody>
-                    </table>
-						</div>
-			
-			</div>
-				<div class="modal-footer">
-					<button onclick="addexpRuns()" type="button" class="btn btn-info" data-dismiss="modal">Add to Exp</button>
-					<button onclick="compareRuns()" type="button" class="btn btn-primary" data-dismiss="modal">Compare</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
-
-
-		<!-- hint Modal -->
-		<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-      <input type="hidden" id="run_id" name="run_id" value=''>
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Permission Denied</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			<div class="modal-body">You are not allowed for the operation.</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
-		  </div>
-	  </div>
-	 </div>
             </div>
           </div>
         </div>
@@ -351,8 +136,16 @@
 					{% include "script.html" %}
           <script src="/static/js/btn-custom.js"></script>
 					<script>
+								$(document).ready(function(){
+											if ({{ modify }})
+											{ 
+											  console.log("You are in admin mode.")
+											} else {
+											  console.log("You are in common mode.")
+											  $(".admin-operation").attr('data-target','#hintModal');
+											}
+								});
 					</script>
-
 
   </body>
 </html>

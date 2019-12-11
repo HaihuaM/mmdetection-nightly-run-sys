@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+				{% include "head_nav.html" %}
+  <body>
+				{% include "nav.html" %}
+    <div class="page">
+						{% include "header.html" %}
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+            <li class="breadcrumb-item active">Literature</li>
+          </ul>
+        </div>
+      </div>
+
+
+      <section>
+        <div class="container-fluid">
+          <!-- Page Header-->
+          <header> 
+            <h1 class="h3 display">Literature on CV</h1>
+
+          </header>
+
+
+          <div class="container">
+
+								 <div class="row justify-content-between">
+												<div class="col-2">
+												 <div class="card text-center" >
+													<div class="card-header"> Operation </div>
+                          <!-- <div class="card-body"> -->
+												    <a href="#" style="text-decoration: none" class="btn btn-light" data-toggle="modal" data-target="#addLiteratureModal">Add Paper</a>
+                          <!-- </div> -->
+                         </div>
+                        </div>
+
+
+												<div class="col-10">	
+													<div class="card">
+														<div class="card-body">
+															<h5 class="card-title">Papers</h5>
+																<ul class="literature list-group list-group-flush">
+														     {% for paper in papers %}
+														      <li class="list-group-item">{{ paper.paper_title }}
+                                  <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Edit Paper"> <button onclick="editPaperValues('{{ paper._id }}')" type="button" class="admin-operation btn btn-light btn-circle btn-circle-sm m-1" data-toggle="modal" data-target="#editPaperModal"><i class="fa fa-cog"></i></button> </span>
+                                  <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Delete Paper"> <button onclick="deletePaperValues('{{ paper._id }}')" type="button" class="admin-operation btn btn-light btn-circle btn-circle-sm m-1" data-toggle="modal" data-target="#deletePaperModal"><i class="fa fa-trash"></i></button> </span>
+																	</br><a href="{{ paper.paper_link }}">{{ paper.paper_link }}</a></li>
+														     {% endfor %}
+																</ul>
+														</div>
+												  </div>
+                        </div>
+
+              </div>
+          {% include "modal.html" %}
+
+          </div>
+        </div>
+      </section>
+					{% include "footer.html" %}
+    </div>
+					{% include "script.html" %}
+
+          <script src="/static/js/btn-custom.js"></script>
+
+					<script>
+								$(document).ready(function(){
+											if ({{ modify }})
+											{ 
+											  console.log("You are in admin mode.")
+											} else {
+											  console.log("You are in common mode.")
+											  $(".admin-operation").attr('data-target','#hintModal');
+											}
+								});
+					</script>
+
+  </body>
+</html>

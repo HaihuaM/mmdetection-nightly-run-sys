@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+				{% include "head_nav.html" %}
+  <body>
+				{% include "nav.html" %}
+    <div class="page">
+						{% include "header.html" %}
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+            <li class="breadcrumb-item active">Experiments</li>
+          </ul>
+        </div>
+      </div>
+      <section>
+        <div class="container-fluid">
+          <!-- Page Header-->
+          <header> 
+            <h1 class="h3 display">Experiments</h1>
+          </header>
+          <div class="container">
+            <div class="col-sm-6 ">
+                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Experiment Description</th>
+                          <th>Runs</th>
+                          <th>Status</th>
+                          <th>Evaluation</th>
+                          <th>Current Epoch</th>
+                          <th>Estimate Time</th>
+                          <th>QoR</th>
+                          <th>Operation</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+												{% for exp in exps %}
+																{% for run in exp.exp_runs %}
+																<tr>
+																				{% if loop.index == 1 %}
+																				<td rowspan="{{ exp.num_runs }}" class="align-middle"> 
+																								<p><small>{{ exp.exp_description }} </small></p>
+																				</td>
+																				{% endif %}
+																				<td class="align-middle">
+																								<a class="noDecoration btn-light" href="/detail/{{ run._id }}">{{run.config_file}}</br>run:{{ run.run_idx }}</a>
+																				</td>
+																				<td class="align-middle">
+																								{% if run.status == "all_done" %}
+																								<p class="text-success">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "train_done" %}
+																								<p class="text-success">all_done<p>
+																								{% endif %}
+																								{% if run.status == "train_running" %}
+																								<p class="text-info">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "train_fail" %}
+																								<p class="text-danger">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "pending" %}
+																								<p class="text-warning">{{ run.status }}<p>
+																								{% endif %}
+																								{% if run.status == "deleting" %}
+																								<p class="text-warning">{{ run.status }}<p>
+																								{% endif %}
+																								<p><small>{{ run.log_last_update }} </small></p>
+																				</td>
+																				<td class="align-middle">{{ run.current_eval_html | safe }}</td>
+																				<td class="align-middle">{{ run.current_epoch }}</td>
+																				<td class="align-middle">{{ run.est_remaining_time }}</td>
+																				{% if loop.index == 1 %}
+																				<td rowspan="{{ exp.num_runs }}" class="align-middle"> 
+																								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Compare Result"><a class="btn-light" href="/compare/{{exp.exp_id}}"><i class="fa fa-binoculars"></i></a></span>
+																				</td>
+																				<td align="center" rowspan="{{ exp.num_runs }}" class="align-middle"> 
+																								<button onclick="deleteExpValues('{{exp.exp_id  }}')" type="button" class="admin-operation btn btn-block btn-sm btn-light" data-toggle="modal" data-target="#deleteModal"><i class="fa fa-trash-o"></i></button>
+																				</td>
+																				{% endif %}
+																</tr>
+																{% endfor %}
+
+												{% endfor %}
+                      </tbody>
+                    </table>
+
+		<!-- delete Modal -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="delete_exp_id" name="delete_exp_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Delete Experiment</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to delete the experiment?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="deleteExp()" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Reschedule Modal -->
+		<div class="modal fade" id="rescheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="rescheduler_run_id" name="rescheduler_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Reschedule the run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to reshedule the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="rescheduleRun()" type="button" class="btn btn-primary" data-dismiss="modal">Reschedule</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Add Run Modal -->
+		<div class="modal fade" id="addrunModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add a run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to add a new run for this config?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="addRun()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Compare Modal -->
+		<div class="modal fade modal-xl" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="width:90%">
+		<div class="modal-dialog modal-lg" style="width:90%" role="document">
+      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Compare between different runs</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> 
+							<div class="custom-control custom-checkbox">
+			
+                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Config</th>
+                          <th>Run ID</th>
+                          <th>Current Epoch</th>
+                          <th>Select</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+												{% for item in tasks %}
+																{% for run in item.runs %}
+																<tr>
+																				{% if loop.index == 1 %}
+																				<td rowspan="{{ item.frequency }}" class="align-middle"> 
+																								{{ item.config_file }}
+																								<p><small>Notes: {{ item.description }} </small></p>
+																				</td>
+																				{% endif %}
+																				<td class="align-middle">
+																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
+																				</td>
+																				<td class="align-middle">{{ run.current_epoch }}</td>
+																				<td>
+																								<div class="custom-control custom-checkbox">
+																												<input name="compare-runs-checkbox" type="checkbox" class="custom-control-input" id="check-box-{{ run._id }}" value="{{run._id}}">
+																												<label class="custom-control-label" for="check-box-{{ run._id }}"></label>
+																								</div>
+																				</td>
+																</tr>
+																{% endfor %}
+
+												{% endfor %}
+                      </tbody>
+                    </table>
+						</div>
+			
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="compareRuns()" type="button" class="btn btn-primary" data-dismiss="modal">Compare</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+		<!-- hint Modal -->
+		<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="run_id" name="run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Permission Denied</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body">You are not allowed for the operation.</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+            </div>
+          </div>
+        </div>
+      </section>
+					{% include "footer.html" %}
+    </div>
+					{% include "script.html" %}
+          <script src="/static/js/btn-custom.js"></script>
+					<script>
+								$(document).ready(function(){
+											if ({{ modify }})
+											{ 
+											  console.log("You are in admin mode.")
+											} else {
+											  console.log("You are in common mode.")
+											  $(".admin-operation").attr('data-target','#hintModal');
+											}
+								});
+					</script>
+
+
+  </body>
+</html>

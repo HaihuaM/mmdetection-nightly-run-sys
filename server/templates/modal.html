@@ -1,0 +1,387 @@
+		
+		<!-- Add Literature Modal -->
+		<div class="modal fade" id="addLiteratureModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add Paper</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body" > 
+		  <div class="container" >
+			 <form id="lit-form" class='form-group' action='/addlit' method='POST' role='form'>
+							 <label for="paper-title" class="mr-sm-2">Paper Title:</label>
+							 <textarea class="form-control mb-2 mr-sm-2" name="paper_title"></textarea>
+							 <label for="paper-link" class="mr-sm-2">Paper Link:</label>
+							 <textarea class="form-control mb-2 mr-sm-2" name="paper_link"></textarea>
+							 <label for="paper-tags" class="mr-sm-2">Tags(split with semicolon)</label>
+							 <textarea class="form-control mb-2 mr-sm-2" name="paper_tags"></textarea>
+			 </form>
+			</div>	
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="addLit()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Add Configure Modal -->
+		<div class="modal fade" id="addConfigModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add Config</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body" > 
+		  <div class="container" >
+			 <form id="addconfig-form" class='form-group' action='/addconfig' method='POST' role='form'>
+							 <label for="config_file" class="mr-sm-2">Config Path:</label>
+							 <input type="text" class="form-control" id="config_file" placeholder="Enter configure directory" name="config_file">
+							 <label for="python" class="mr-sm-2">Python:</label>
+							 <input type="text" class="form-control" id="python" placeholder="Enter python interpreter" name="python">
+							 <label for="priority" class="mr-sm-2">Priority:</label>
+							 <input type="number" class="form-control" id="priority" placeholder="100" name="priority" value=100>
+							 <label for="train_num_gpu">Num GPUs:</label>
+							 <select type="number" class="form-control" id="train_num_gpu" name="train_num_gpu">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+									<option>4</option>
+							 </select>
+							 <label for="description" class="mr-sm-2">Description</label>
+							 <textarea class="form-control mb-2 mr-sm-2" id="description" name="description"></textarea>
+
+							 <div class="form-check-inline">
+								 <label class="form-check-label">
+										 <input type="checkbox" class="form-check-input" name="farm" value="off">Farm
+								</label>
+							 </div>
+			 </form>
+			</div>	
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="addConfig()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+
+		<!-- delete Modal -->
+		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="delete_run_id" name="delete_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Delete Run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to delete the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="deleteRun()" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- delete Modal -->
+		<div class="modal fade" id="deleteConfigModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="delete_task_id" name="delete_task_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Delete Config</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to delete the config?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="deleteConfig()" type="button" class="btn btn-danger" data-dismiss="modal">Delete</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+		<!-- delete paper Modal -->
+		<div class="modal fade" id="deletePaperModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="delete_paper_id" name="delete_paper_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Delete Paper</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to delete paper?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="deletePaper()" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+
+		<!-- Stop Run Modal -->
+		<div class="modal fade" id="stopModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="stop_run_id" name="stop_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Stop Run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to stop the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="stopRun()" type="button" class="btn btn-primary" data-dismiss="modal">Stop</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+
+		<!-- Reschedule Modal -->
+		<div class="modal fade" id="rescheduleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="rescheduler_run_id" name="rescheduler_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Reschedule the run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to reshedule the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="rescheduleRun()" type="button" class="btn btn-primary" data-dismiss="modal">Reschedule</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Reschedule Modal -->
+		<div class="modal fade" id="recoverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="recover_run_id" name="recover_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Reschedule the run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to recover the run?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="recoverRun()" type="button" class="btn btn-primary" data-dismiss="modal">Recover</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+		<!-- Add Run Modal -->
+		<div class="modal fade" id="addrunModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Add a run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> Are you sure to add a new run for this config?</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="addRun()" type="button" class="btn btn-primary" data-dismiss="modal">Add</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Edit Run Modal -->
+		<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="edit_config_id" name="edit_config_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit Config</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body" > 
+		  <div class="container" >
+			 <form id="config-form" class='form-group' action='/edit_task' method='POST' role='form'>
+       
+			 </form>
+			</div>	
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="editConfig()" type="button" class="btn btn-primary" data-dismiss="modal">Edit</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Edit Paper Modal -->
+		<div class="modal fade" id="editPaperModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="edit_paper_id" name="edit_paper_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit Paper</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body" > 
+		  <div class="container" >
+			 <form id="edit-paper-form" class='form-group' action='/edit_paper' method='POST' role='form'>
+       
+			 </form>
+			</div>	
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="editPaper()" type="button" class="btn btn-primary" data-dismiss="modal">Edit</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+		<!-- Edit Run Modal -->
+		<div class="modal fade" id="editRunModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="edit_run_id" name="edit_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit Run</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body" > 
+		  <div class="container" >
+			 <form id="edit-run-form" class='form-group' action='/edit_run' method='POST' role='form'>
+       
+			 </form>
+			</div>	
+			</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button onclick="editRun()" type="button" class="btn btn-primary" data-dismiss="modal">Edit</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+
+
+
+		<!-- Compare Modal -->
+		<div class="modal fade modal-xl" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  style="width:90%">
+		<div class="modal-dialog modal-lg" style="width:90%" role="document">
+      <input type="hidden" id="add_run_id" name="add_run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Compare between different runs</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body"> 
+							<div class="custom-control custom-checkbox">
+			
+                    <table id="status-data-table" class="table text-center table-bordered table-condensed " style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Config</th>
+                          <th>Run ID</th>
+                          <th>Current Epoch</th>
+                          <th>Select</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+												{% for item in tasks %}
+																{% for run in item.runs %}
+																<tr>
+																				{% if loop.index == 1 %}
+																				<td rowspan="{{ item.frequency }}" class="align-middle"> 
+																								{{ item.config_file }}
+																								<p><small>Notes: {{ item.description }} </small></p>
+																				</td>
+																				{% endif %}
+																				<td class="align-middle">
+																												<a href="/detail/{{ run._id }}">{{ run.run_idx }}</a>
+																				</td>
+																				<td class="align-middle">{{ run.current_epoch }}</td>
+																				<td>
+																								<div class="custom-control custom-checkbox">
+																												<input name="compare-runs-checkbox" type="checkbox" class="custom-control-input" id="check-box-{{ run._id }}" value="{{run._id}}">
+																												<label class="custom-control-label" for="check-box-{{ run._id }}"></label>
+																								</div>
+																				</td>
+																</tr>
+																{% endfor %}
+
+												{% endfor %}
+                      </tbody>
+                    </table>
+						</div>
+			
+			</div>
+				<div class="modal-footer">
+					<button onclick="addexpRuns()" type="button" class="btn btn-info" data-dismiss="modal">Add to Exp</button>
+					<button onclick="compareRuns()" type="button" class="btn btn-primary" data-dismiss="modal">Compare</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
+		<!-- hint Modal -->
+		<div class="modal fade" id="hintModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+      <input type="hidden" id="run_id" name="run_id" value=''>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Permission Denied</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			<div class="modal-body">You are not allowed for the operation.</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+		  </div>
+	  </div>
+	 </div>
+
+
